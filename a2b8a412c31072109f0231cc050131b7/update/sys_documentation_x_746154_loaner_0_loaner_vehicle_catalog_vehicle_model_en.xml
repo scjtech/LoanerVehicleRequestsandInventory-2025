@@ -10,8 +10,8 @@
             <plural>Vehicle Models</plural>
             <sys_class_name>sys_documentation</sys_class_name>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2025-10-04 07:33:59</sys_created_on>
-            <sys_id>aa21d37ac39032109f0231cc050131f4</sys_id>
+            <sys_created_on>2025-10-06 03:27:03</sys_created_on>
+            <sys_id>34dbac27c390f2109f0231cc0501317f</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_name>Vehicle Model</sys_name>
             <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
@@ -19,7 +19,7 @@
             <sys_scope display_value="Loaner Vehicle Application">a2b8a412c31072109f0231cc050131b7</sys_scope>
             <sys_update_name>sys_documentation_x_746154_loaner_0_loaner_vehicle_catalog_vehicle_model_en</sys_update_name>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2025-10-04 07:33:59</sys_updated_on>
+            <sys_updated_on>2025-10-06 03:27:03</sys_updated_on>
             <url/>
             <url_target/>
         </sys_documentation>

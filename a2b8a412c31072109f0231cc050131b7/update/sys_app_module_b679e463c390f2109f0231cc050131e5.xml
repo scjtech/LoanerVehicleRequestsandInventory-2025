@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_module">
     <sys_app_module action="INSERT_OR_UPDATE">
         <active>true</active>
-        <application display_value="Loaner Vehicle Request and inventory">6f7a8c2bc3dcb2109f0231cc05013184</application>
+        <application display_value="System Import Sets">import_sets</application>
         <assessment/>
         <device_type/>
         <filter/>
@@ -10,10 +10,10 @@
         <image/>
         <link_type>LIST</link_type>
         <map_page/>
-        <mobile_title>All</mobile_title>
+        <mobile_title>Loaner Vehicle Catalog Set</mobile_title>
         <mobile_view_name>Mobile</mobile_view_name>
-        <name>x_746154_loaner_0_loaner_vehicle_catalog</name>
-        <order>60</order>
+        <name>x_746154_loaner_0_loaner_vehicle_catalog_set</name>
+        <order>1100</order>
         <override_menu_roles>false</override_menu_roles>
         <query/>
         <report/>
@@ -21,21 +21,21 @@
         <roles/>
         <sys_class_name>sys_app_module</sys_class_name>
         <sys_created_by>admin</sys_created_by>
-        <sys_created_on>2025-10-06 01:22:41</sys_created_on>
+        <sys_created_on>2025-10-06 03:16:49</sys_created_on>
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
-        <sys_id>d59cc46bc3dcb2109f0231cc050131ec</sys_id>
+        <sys_id>b679e463c390f2109f0231cc050131e5</sys_id>
         <sys_mod_count>0</sys_mod_count>
-        <sys_name>All</sys_name>
+        <sys_name>Loaner Vehicle Catalog Set</sys_name>
         <sys_overrides/>
         <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
         <sys_policy/>
         <sys_scope display_value="Loaner Vehicle Application">a2b8a412c31072109f0231cc050131b7</sys_scope>
-        <sys_update_name>sys_app_module_d59cc46bc3dcb2109f0231cc050131ec</sys_update_name>
+        <sys_update_name>sys_app_module_b679e463c390f2109f0231cc050131e5</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2025-10-06 01:22:41</sys_updated_on>
+        <sys_updated_on>2025-10-06 03:16:49</sys_updated_on>
         <timeline_page/>
-        <title>All</title>
+        <title>Loaner Vehicle Catalog Set</title>
         <uncancelable>false</uncancelable>
         <view_name/>
         <window_name/>
