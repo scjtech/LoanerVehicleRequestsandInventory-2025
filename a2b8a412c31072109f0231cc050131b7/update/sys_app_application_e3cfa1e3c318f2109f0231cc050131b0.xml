@@ -10,20 +10,20 @@
         <roles/>
         <sys_class_name>sys_app_application</sys_class_name>
         <sys_created_by>admin</sys_created_by>
-        <sys_created_on>2025-10-06 01:03:22</sys_created_on>
+        <sys_created_on>2025-10-06 08:24:41</sys_created_on>
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
-        <sys_id>6f7a8c2bc3dcb2109f0231cc05013184</sys_id>
+        <sys_id>e3cfa1e3c318f2109f0231cc050131b0</sys_id>
         <sys_mod_count>0</sys_mod_count>
-        <sys_name>Loaner Vehicle Request and inventory</sys_name>
+        <sys_name>Loaner Vehicle Request and Inventory</sys_name>
         <sys_overrides/>
         <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
         <sys_policy/>
         <sys_scope display_value="Loaner Vehicle Application">a2b8a412c31072109f0231cc050131b7</sys_scope>
-        <sys_update_name>sys_app_application_6f7a8c2bc3dcb2109f0231cc05013184</sys_update_name>
+        <sys_update_name>sys_app_application_e3cfa1e3c318f2109f0231cc050131b0</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2025-10-06 01:03:22</sys_updated_on>
-        <title>Loaner Vehicle Request and inventory</title>
+        <sys_updated_on>2025-10-06 08:24:41</sys_updated_on>
+        <title>Loaner Vehicle Request and Inventory</title>
         <view_name/>
     </sys_app_application>
 </record_update>

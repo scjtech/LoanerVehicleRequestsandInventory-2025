@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_module">
     <sys_app_module action="INSERT_OR_UPDATE">
         <active>true</active>
-        <application display_value="Loaner Vehicle Request and Inventory">e3cfa1e3c318f2109f0231cc050131b0</application>
+        <application/>
         <assessment/>
         <device_type/>
-        <filter/>
+        <filter table="x_746154_loaner_0_vehicle_tracker">tracker_status=open^EQ<item display_value="Open" endquery="false" field="tracker_status" goto="false" newquery="false" operator="=" or="false" value="open"/>
+            <item endquery="true" field="" goto="false" newquery="false" operator="=" or="false" value=""/>
+        </filter>
         <hint/>
         <homepage/>
         <image/>
-        <link_type>SEPARATOR</link_type>
+        <link_type>LIST</link_type>
         <map_page/>
-        <mobile_title>Loaner Vehicle Catalog</mobile_title>
+        <mobile_title>Open</mobile_title>
         <mobile_view_name>Mobile</mobile_view_name>
-        <name/>
-        <order>20</order>
+        <name>x_746154_loaner_0_vehicle_tracker</name>
+        <order/>
         <override_menu_roles>false</override_menu_roles>
         <query/>
         <report/>
@@ -21,21 +23,21 @@
         <roles/>
         <sys_class_name>sys_app_module</sys_class_name>
         <sys_created_by>admin</sys_created_by>
-        <sys_created_on>2025-10-06 01:05:37</sys_created_on>
+        <sys_created_on>2025-10-06 07:41:10</sys_created_on>
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
-        <sys_id>002b0c6bc3dcb2109f0231cc050131f7</sys_id>
+        <sys_id>d3c52967c3d4f2109f0231cc050131bc</sys_id>
         <sys_mod_count>3</sys_mod_count>
-        <sys_name>Loaner Vehicle Catalog</sys_name>
-        <sys_overrides/>
+        <sys_name>Open</sys_name>
+        <sys_overrides display_value="Vehicle Tracker">62a4ede3c3d4f2109f0231cc05013178</sys_overrides>
         <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
         <sys_policy/>
         <sys_scope display_value="Loaner Vehicle Application">a2b8a412c31072109f0231cc050131b7</sys_scope>
-        <sys_update_name>sys_app_module_002b0c6bc3dcb2109f0231cc050131f7</sys_update_name>
+        <sys_update_name>sys_app_module_d3c52967c3d4f2109f0231cc050131bc</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2025-10-06 08:37:54</sys_updated_on>
+        <sys_updated_on>2025-10-06 08:39:17</sys_updated_on>
         <timeline_page/>
-        <title>Loaner Vehicle Catalog</title>
+        <title>Open</title>
         <uncancelable>false</uncancelable>
         <view_name/>
         <window_name/>
