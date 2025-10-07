@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_security_acl_role">
+    <sys_security_acl_role action="INSERT_OR_UPDATE">
+        <sys_class_name>sys_security_acl_role</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-10-07 03:58:45</sys_created_on>
+        <sys_id>07acbdb7c39c32109f0231cc05013147</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_746154_loaner_0_vehicle_servicing.x_746154_loaner_0.vehicle_servicing_user</sys_name>
+        <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Loaner Vehicle Application">a2b8a412c31072109f0231cc050131b7</sys_scope>
+        <sys_security_acl display_value="x_746154_loaner_0_vehicle_servicing">cfacbdb7c39c32109f0231cc05013143</sys_security_acl>
+        <sys_update_name>sys_security_acl_role_07acbdb7c39c32109f0231cc05013147</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-10-07 03:58:45</sys_updated_on>
+        <sys_user_role display_value="x_746154_loaner_0.vehicle_servicing_user" name="x_746154_loaner_0.vehicle_servicing_user">f2ac39b7c39c32109f0231cc050131f6</sys_user_role>
+    </sys_security_acl_role>
+</record_update>

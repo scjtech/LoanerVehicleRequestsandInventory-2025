@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_documentation element="date_sent_for_servicing" label="Date Sent for Servicing" language="en" table="x_746154_loaner_0_vehicle_servicing">
+        <sys_documentation action="INSERT_OR_UPDATE">
+            <element>date_sent_for_servicing</element>
+            <help/>
+            <hint/>
+            <label>Date Sent for Servicing</label>
+            <language>en</language>
+            <name>x_746154_loaner_0_vehicle_servicing</name>
+            <plural>Date Sent for Servicings</plural>
+            <sys_class_name>sys_documentation</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2025-10-07 04:11:56</sys_created_on>
+            <sys_id>58bff97bc39c32109f0231cc05013158</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>Date Sent for Servicing</sys_name>
+            <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="Loaner Vehicle Application">a2b8a412c31072109f0231cc050131b7</sys_scope>
+            <sys_update_name>sys_documentation_x_746154_loaner_0_vehicle_servicing_date_sent_for_servicing_en</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2025-10-07 04:11:56</sys_updated_on>
+            <url/>
+            <url_target/>
+        </sys_documentation>
+    </sys_documentation>
+</record_update>
