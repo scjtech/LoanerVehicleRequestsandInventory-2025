@@ -29,7 +29,7 @@
         <mobile_picture/>
         <mobile_picture_type>use_desktop_picture</mobile_picture_type>
         <model/>
-        <name>Loaner Vehicle Return Schedule</name>
+        <name>Loaner Vehicle Return Reschedule</name>
         <no_attachment_v2>false</no_attachment_v2>
         <no_cart>false</no_cart>
         <no_cart_v2>false</no_cart_v2>
@@ -58,7 +58,7 @@
         <sc_ic_item_staging/>
         <sc_ic_version/>
         <sc_template/>
-        <short_description>Return Vehicle Schedule for Loaner Vehicle</short_description>
+        <short_description>Return Vehicle Reschedule for Loaner Vehicle</short_description>
         <show_variable_help_on_load>false</show_variable_help_on_load>
         <start_closed>false</start_closed>
         <state/>
@@ -66,21 +66,21 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2025-10-20 06:30:09</sys_created_on>
         <sys_id>98bb1140c378b2109f0231cc0501314e</sys_id>
-        <sys_mod_count>12</sys_mod_count>
-        <sys_name>Loaner Vehicle Return Schedule</sys_name>
+        <sys_mod_count>21</sys_mod_count>
+        <sys_name>Loaner Vehicle Return Reschedule</sys_name>
         <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
         <sys_policy/>
         <sys_scope display_value="Loaner Vehicle Application">a2b8a412c31072109f0231cc050131b7</sys_scope>
         <sys_update_name>sc_cat_item_98bb1140c378b2109f0231cc0501314e</sys_update_name>
         <sys_updated_by>system</sys_updated_by>
-        <sys_updated_on>2025-10-22 04:50:23</sys_updated_on>
+        <sys_updated_on>2025-10-25 04:17:20</sys_updated_on>
         <taxonomy_topic/>
         <template/>
         <template_manager_roles/>
         <type>item</type>
         <use_sc_layout>true</use_sc_layout>
         <vendor/>
-        <version>12</version>
+        <version>21</version>
         <visible_bundle>true</visible_bundle>
         <visible_guide>true</visible_guide>
         <visible_standalone>true</visible_standalone>
