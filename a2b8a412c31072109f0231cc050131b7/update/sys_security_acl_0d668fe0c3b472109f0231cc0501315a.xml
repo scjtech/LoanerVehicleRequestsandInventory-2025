@@ -2,29 +2,30 @@
     <sys_security_acl action="INSERT_OR_UPDATE">
         <active>true</active>
         <admin_overrides>true</admin_overrides>
-        <advanced>false</advanced>
+        <advanced>true</advanced>
         <applies_to/>
         <condition/>
         <controlled_by_refs/>
         <decision_type>allow</decision_type>
-        <description/>
+        <description>Allow read for records in x_746154_loaner_0_loaner_vehicle_catalog, if the ACL script returns true.</description>
         <local_or_existing>Existing</local_or_existing>
         <name>x_746154_loaner_0_loaner_vehicle_catalog</name>
         <operation display_value="read">read</operation>
-        <script/>
+        <script><![CDATA[// Allow all authenticated users to read
+answer = true;]]></script>
         <security_attribute/>
         <sys_class_name>sys_security_acl</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2025-10-22 03:32:33</sys_created_on>
         <sys_id>0d668fe0c3b472109f0231cc0501315a</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>1</sys_mod_count>
         <sys_name>x_746154_loaner_0_loaner_vehicle_catalog</sys_name>
         <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
         <sys_policy/>
         <sys_scope display_value="Loaner Vehicle Application">a2b8a412c31072109f0231cc050131b7</sys_scope>
         <sys_update_name>sys_security_acl_0d668fe0c3b472109f0231cc0501315a</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2025-10-22 03:32:33</sys_updated_on>
+        <sys_updated_on>2025-10-26 04:52:41</sys_updated_on>
         <type display_value="record">record</type>
     </sys_security_acl>
 </record_update>
