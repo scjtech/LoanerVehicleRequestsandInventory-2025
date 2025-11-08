@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[api.controller=function() {
+  /* widget controller */
+  var c = this;
+};]]></client_script>
+        <controller_as>c</controller_as>
+        <css>.at-return{ border-radius:12px; background:#0b2233; color:#fff; margin:16px 0; }&#13;
+.at-body{ display:flex; align-items:center; justify-content:space-between; gap:16px; padding:16px 20px; flex-wrap:wrap; }&#13;
+.at-title{ font-weight:800; font-size:18px; margin-bottom:4px; display:flex; align-items:center; gap:8px; }&#13;
+.at-meta{ opacity:.9; margin-bottom:6px; }&#13;
+.at-label{ opacity:.85; margin-right:6px; }&#13;
+.at-sep{ opacity:.6; margin:0 8px; }&#13;
+.at-date{ font-size:16px; }&#13;
+&#13;
+.at-badge{ display:inline-block; margin-left:10px; padding:2px 8px; border-radius:999px; font-weight:700; }&#13;
+.at-badge.overdue{ background:#ff4d4f; color:#fff; }  /* red */&#13;
+.at-badge.today{   background:#ffb020; color:#1b1b1b; }/* amber */&#13;
+.at-badge.soon{    background:#2fbf71; color:#0b2233; }/* green */&#13;
+&#13;
+.at-pill{ display:inline-block; padding:2px 8px; border-radius:999px; font-size:12px; font-weight:800; letter-spacing:.3px; }&#13;
+.at-pill--overdue{ background:#ff4d4f; color:#fff; }&#13;
+.at-pill--today{   background:#ffb020; color:#1b1b1b; }&#13;
+.at-pill--soon{    background:#2fbf71; color:#0b2233; }&#13;
+&#13;
+.at-actions .btn{ margin-left:8px; }&#13;
+@media (max-width: 768px){&#13;
+  .at-actions{ width:100%; display:flex; gap:8px; }&#13;
+  .at-actions .btn{ flex:1 1 auto; margin:0; }&#13;
+}&#13;
+</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description>A reminder of return date for the loaner vehicle</description>
+        <docs/>
+        <field_list/>
+        <has_preview>true</has_preview>
+        <id>at_return_reminder</id>
+        <internal>false</internal>
+        <link><![CDATA[function link(scope, element, attrs, controller) {
+  
+}]]></link>
+        <name>AT Return Reminder</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function () {
+  // ====== CONFIG (adjust if your field names/values differ) ======
+  var TRACKER_TABLE   = 'x_746154_loaner_0_vehicle_tracker';
+  var USER_FIELD_1    = 'requested_for';      // first user field to check
+  var USER_FIELD_2    = 'assigned_to';        // OR second user field
+  var STATUS_FIELD    = 'vehicle_status';     // status field on tracker
+  var OUT_VALUE       = 'out_on_field';       // stored value for “Out on Field”
+  var RETURN_FIELD    = 'expected_return_date'; // date/datetime field name
+
+  // Instance options (optional): threshold days, reschedule item, and var name to prefill
+  var thresholdDays   = parseInt(options.threshold_days || 3, 10); // warn if due in ≤ N days
+  var rescheduleItem  = options.reschedule_item_sys_id || '';      // catalog item sys_id
+  var trackerVarName  = options.tracker_var_name || 'tracker';     // var name on that item
+
+  data.show = false;
+  data.hasTracker = false;
+  data.reschedule_url = '';
+  data.tracker_url = '';
+  data.state = '';          // 'overdue' | 'today' | 'soon' | 'ok'
+  data.days_left = null;
+  data.return_display = '';
+  data.vehicle = '';
+  data.tracker_number = '';
+
+  var me = gs.getUserID();
+
+  var gr = new GlideRecord(TRACKER_TABLE);
+  // current user's active tracker “out on field”
+  var qc = gr.addQuery(USER_FIELD_1, me);
+  qc.addOrCondition(USER_FIELD_2, me);
+  gr.addQuery(STATUS_FIELD, OUT_VALUE);
+  gr.addNotNullQuery(RETURN_FIELD);
+  gr.orderBy('' + RETURN_FIELD);
+  gr.setLimit(1);
+  gr.query();
+
+  if (gr.next()) {
+    data.hasTracker     = true;
+    data.tracker_sys_id = gr.getUniqueValue();
+    data.tracker_number = gr.getDisplayValue('number') || gr.getValue('number');
+    data.vehicle        = gr.getDisplayValue('vehicle');
+    data.return_display = gr.getDisplayValue(RETURN_FIELD);
+
+    // days left (integer, negative if overdue)
+    var due = new GlideDateTime(gr.getValue(RETURN_FIELD));
+    var now = new GlideDateTime();
+    var diffMs = (due.getNumericValue() - now.getNumericValue());  // ms
+    var oneDay = 1000 * 60 * 60 * 24;
+    data.days_left = Math.floor(diffMs / oneDay);
+
+    // state
+    if (data.days_left < 0)        data.state = 'overdue';
+    else if (data.days_left === 0) data.state = 'today';
+    else if (data.days_left <= thresholdDays) data.state = 'soon';
+    else                           data.state = 'ok';
+
+    // show card only for overdue/today/soon (you can change this)
+    data.show = (data.state !== 'ok');
+
+    // links
+    data.tracker_url = '/sp?id=form&table=' + TRACKER_TABLE + '&sys_id=' + data.tracker_sys_id;
+
+    if (rescheduleItem) {
+      // Deep-link to reschedule item, optionally prefill the tracker variable
+      data.reschedule_url = '/sp?id=sc_cat_item&sys_id=' + rescheduleItem;
+      if (trackerVarName) {
+        data.reschedule_url += '&variables.' + trackerVarName + '=' + data.tracker_sys_id;
+      }
+    }
+  }
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-11-08 06:15:17</sys_created_on>
+        <sys_id>7a3ac38ec38972109f0231cc0501311c</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>AT Return Reminder</sys_name>
+        <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Loaner Vehicle Application">a2b8a412c31072109f0231cc050131b7</sys_scope>
+        <sys_update_name>sp_widget_7a3ac38ec38972109f0231cc0501311c</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-11-08 07:53:01</sys_updated_on>
+        <template><![CDATA[<div ng-if="data.show" class="at-return card shadow-sm" role="region" aria-label="Return reminder">
+  <div class="at-body">
+    <div class="at-left">
+      <div class="at-title">
+        <span class="at-pill at-pill--overdue" ng-if="data.state==='overdue'">Overdue</span>
+        <span class="at-pill at-pill--today"   ng-if="data.state==='today'">Due Today</span>
+        <span class="at-pill at-pill--soon"    ng-if="data.state==='soon'">Due Soon</span>
+        Return Reminder
+      </div>
+      <div class="at-meta">
+        <span class="at-label">Vehicle:</span> {{data.vehicle || '—'}}
+        <span class="at-sep">•</span>
+        <span class="at-label">Tracker:</span> {{data.tracker_number || '—'}}
+      </div>
+      <div class="at-date">
+        <span class="at-label">Due back:</span> {{data.return_display}}
+        <span class="at-badge"
+              ng-class="{'overdue': data.state==='overdue', 'today': data.state==='today', 'soon': data.state==='soon'}"
+              aria-live="polite">
+          <span ng-if="data.state==='overdue'">Overdue by {{(-1 * data.days_left)}}d</span>
+          <span ng-if="data.state==='today'">Today</span>
+          <span ng-if="data.state==='soon'">{{data.days_left}} day<span ng-if="data.days_left!==1">s</span> left</span>
+        </span>
+      </div>
+    </div>
+    <div class="at-actions">
+      <a class="btn btn-primary" ng-if="data.reschedule_url" ng-href="{{data.reschedule_url}}">Reschedule</a>
+      <a class="btn btn-default" ng-href="{{data.tracker_url}}">View Tracker</a>
+    </div>
+  </div>
+</div>
+]]></template>
+    </sp_widget>
+</record_update>

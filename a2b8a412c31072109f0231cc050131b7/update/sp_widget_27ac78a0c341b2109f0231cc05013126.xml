@@ -1,0 +1,926 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[api.controller=function($scope, $rootScope, $timeout, $http, $sce, spUtil, aisaUtils, aisaSearch, aisaAction, aisaFeedback, i18n) {
+	var c = this;
+
+	if (!c.data.useAISA) 
+		$('#ai_search_assist').css('display', 'none');
+	
+	var ARIA_MSG_GAP = 1000;
+	var ariaMsgs = c.data.ariaMsgs;
+	var REQUESTED_FIELDS = {
+		"kb_knowledge": ["sys_class_name", "number", "short_description", "description", "sys_view_count", "kb_knowledge_base", "kb_category", "author", "published", "text", "rating", "display_attachments","sys_updated_on"],
+		"sc_cat_item": ["sys_class_name", "name", "short_description", "description", "category", "picture"]
+	};
+
+	$scope.i18n = i18n;
+	$scope.i18nMsgs = c.data.i18nMsgs;
+	$scope.getResultField = aisaUtils.getResultField;
+
+	if (c.data.rpConfig) {
+		$scope.HEADER_TEXT = c.data.rpConfig.headerText;
+		$scope.ALLOW_EXPAND_COLLAPSE = c.data.rpConfig.allowExpandCollapse;
+		$scope.RESULTS_PER_PAGE = c.data.rpConfig.resultsPerPage;
+		var searchField = $scope.page.g_form.getField("IO:" + c.data.rpConfig.searchVariable);
+		$scope.trigger = {
+			field: searchField,
+			element: document.getElementById('sp_formfield_'+searchField.name)
+		};
+	}
+
+	$scope.initializeWidget = function() {
+		if (window.GlideSignals)
+			initializeGlideSignals();
+		else {
+			$rootScope.$on("sp.defer_scripts.loaded", function(){
+				if (window.GlideSignals)
+					initializeGlideSignals();
+			});
+		}
+
+		if (!c.data.isLocationTrackerDisabled) {
+			setUserLocationCoords(function(coords) {
+				c.latitude = coords.latitude;
+				c.longitude = coords.longitude;
+			});
+		}
+		/**
+		 * searchResponsePending: set to true everytime a request is submitted, and false when response is received
+		 * @type {boolean}
+		 */
+		$scope.searchResponsePending = false;
+		/**
+		 * Stores the delayed search term when search response is pending.
+		 * And will be used to trigger a search when response returns
+		 * @type {string}
+		 */
+		$scope.delayedSearchTerm = null;
+		$scope.resetWidgetForEmptySearch();
+		/**
+		 * object for holding mapping from result sys id to a list of action objects
+		 * Value updated everytime search returns: searchSuccessHandler
+		 * @type {object}
+		 */
+		$scope.actionMap = {};
+	};
+
+	function initializeGlideSignals() {
+		if (!c.data.isLocationTrackerDisabled && window.GlideSignals.init) {
+			window.GlideSignals.init();
+		}
+
+		if (window.GlideSignals.trackEvent)
+			c.isGlideSignalsLoaded = true;
+
+		$rootScope.GlideSignals = GlideSignals;
+	}
+
+	function setUserLocationCoords(cb) {
+		var onSuccess = function(pos) {
+			return cb({
+				latitude: pos.coords.latitude,
+				longitude: pos.coords.longitude
+			});
+		};
+		var onError = function() {
+			return cb({
+				latitude: null,
+				longitude: null	
+			});
+		};
+		return window.navigator.geolocation.getCurrentPosition(onSuccess, onError, {
+			enableHighAccuracy: true
+		});
+	}
+
+	$scope.resetWidgetForEmptySearch = function() {
+		$scope.resultsPageIndex = -1;
+		$scope.detailResultIndex = -1;
+		$scope.isContainerCollapsed = false;
+	};
+
+	$scope.initializeWidget();
+
+	/**
+	 * Construct and submit a search request
+	 * @param {string} newValue the search term
+	 */
+	function search(trimmedNewValue) {
+		$scope.setAriaStatus(i18n.format(ariaMsgs.searching, trimmedNewValue), 0);
+
+		var searchRequest = aisaSearch.newSearchRequest({
+			searchApp: c.data.rpConfig.searchApp,
+			searchTerm: trimmedNewValue,
+			requestedFields: REQUESTED_FIELDS,
+			rpSysId: c.data.rpSysId
+		});
+
+		$scope.searchResponsePending = true;
+		// Submit search request and handle results returned from promise
+		searchRequest.submit().then(searchSuccessHandler, searchFailureHandler);
+	}
+	/**
+	 * construct a map from result sysId to list of actions.
+	 * resultsActionsMap and availableActions are part of search response
+	 *
+	 * @param {object} resultsActionsMap: in shape of {resultSysId: [actionSysId]}
+	 * @param {object} availableActions: in shape of {actionSysId: {actionObj}}
+	 *
+	 * @return {object} actionMap: in shape of {resultSysId: [{action object}]}
+	 */
+	function getResultActions(resultsActionsMap, availableActions) {
+		var resultActions = {};
+		for (var result in resultsActionsMap) {
+			resultActions[result] = [];
+			for (var i in resultsActionsMap[result]) {
+				var actionSysId = resultsActionsMap[result][i];
+				if (!availableActions[actionSysId])
+					continue;
+				resultActions[result].push(availableActions[actionSysId]);
+			}
+		}
+		return resultActions;
+	}
+
+	function searchSuccessHandler(response) {
+		$scope.searchResponsePending = false;
+		$scope.searchAPIResponse = response.search;
+		var searchResults = $scope.searchAPIResponse.searchResults;
+		if (searchResults && searchResults.length > 0) {
+			var resultCount = searchResults.length || '';
+			if ($scope.hasMoreResults())
+				$scope.setAriaStatus(i18n.format(ariaMsgs.searchCompleted, resultCount, $scope.trigger.field.label), ARIA_MSG_GAP);
+			else
+				$scope.setAriaStatus(i18n.format(ariaMsgs.allResultsLoaded, resultCount), ARIA_MSG_GAP);
+		} else
+			$scope.setAriaStatus(i18n.format(ariaMsgs.noMatchingResults, response.search.term), ARIA_MSG_GAP);
+		$scope.resultsPageIndex = 0;
+		$scope.actionMap = getResultActions(response.resultsActionsMap, response.availableActions);
+		aisaFeedback.searchEvent($scope.searchAPIResponse.term, c.data.rpConfig, $scope.searchAPIResponse.searchResults, c.data.session);
+		aisaFeedback.sendSearchAppSeeEvent($scope.searchAPIResponse.term, c.data.rpSysId, $scope.searchAPIResponse.responseTimeInMs, c.data.session.domain);
+
+		if ($scope.delayedSearchTerm)
+			searchUponTriggerValueChange($scope.delayedSearchTerm, null);
+	}
+
+	function searchFailureHandler(response) {
+		$scope.searchResponsePending = false;
+	}
+
+	/**
+	 * Event handler for field value change, and triggers a debounced search
+	 * @param {string} newValue
+	 * @param {string} oldValue
+	 */
+	function searchUponTriggerValueChange(newValue, oldValue) {
+		preSearchValidation(newValue, false);
+	}
+
+	function preSearchValidation(newValue, forceImmediateSearch) {
+		$scope.delayedSearchTerm = null;
+		if ($scope.trigger.timeout)
+			$timeout.cancel($scope.trigger.timeout);
+
+		if (!newValue) {
+			$scope.resetWidgetForEmptySearch();
+			return;
+		}
+
+		var trimmedNewValue = newValue.trim();
+		var charLength = trimmedNewValue.replace(/\s/g,'').length;
+		if (!trimmedNewValue || charLength < c.data.aisaProperties.min_length) {
+			$scope.resetWidgetForEmptySearch();
+			$scope.setAriaStatus(ariaMsgs.noResultsToDisplay, 0);
+			return;
+		}
+
+		if ($scope.searchAPIResponse && $scope.searchAPIResponse.term === trimmedNewValue) {
+			$scope.resultsPageIndex = 0;
+			return;
+		}
+
+		if (forceImmediateSearch){
+			search(trimmedNewValue);
+			return;
+		}
+
+		if ($scope.searchResponsePending) {
+			$scope.delayedSearchTerm = trimmedNewValue;
+			return;
+		}
+		if (c.data.aisaProperties.wait_time >= 0)
+			$scope.trigger.timeout = $timeout(search, c.data.aisaProperties.wait_time, true, trimmedNewValue);
+	}
+	
+	if (c.data.useAISA && $scope.trigger) {
+		$scope.$watch("trigger.field.stagedValue", searchUponTriggerValueChange);
+		if ($scope.trigger.element)
+			$scope.trigger.element.addEventListener('blur', function(event) {
+				preSearchValidation($scope.trigger.field.stagedValue, true);
+			});
+	}
+
+	$scope.execAction = function(action, resultRecord, index) {
+		var commonFeedbackData = aisaFeedback.getCommonEventData($scope.searchAPIResponse.term, c.data.rpConfig);
+		aisaAction.execAction(action, resultRecord, commonFeedbackData, null, null, c.data.session.domain, c.data.rpSysId, index + 1);
+	};
+
+	$scope.toggleContainer = function() {
+		$scope.isContainerCollapsed = !$scope.isContainerCollapsed;
+	};
+
+	$scope.getResultTemplate = function(result) {
+		if (!result)
+			return null;
+
+		return (result.table) ? "aisa-result-" + result.table : "aisa-result-default";
+	};
+
+	$scope.getLocaleDateString = function(input) {
+		return new Date(input).toLocaleDateString();
+	};
+
+	$scope.getRatingDesc = function(rating) {
+		rating = $scope.getRating(rating);
+		if (rating == 0)
+			return $scope.i18nMsgs.NO_RATING;
+
+		return i18n.format(c.data.i18nMsgs.RATING, $scope.getRating(rating));
+	};
+
+	$scope.getRating = function(rating) {
+		return Math.round(rating || 0);
+	};
+
+	$scope.getResultsLimit = function() {
+		if ($scope.resultsPageIndex < 0)
+			return -1;
+
+		return (1 + $scope.resultsPageIndex) * $scope.RESULTS_PER_PAGE;
+	};
+
+	$scope.hasMoreResults = function() {
+		if ($scope.resultsPageIndex < 0)
+			return false;
+		
+		if (!$scope.searchAPIResponse.searchResults)
+			return false;
+		
+		return $scope.searchAPIResponse.searchResults.length > $scope.getResultsLimit();
+	};
+
+	$scope.getMoreResults = function() {
+		$scope.resultsPageIndex ++;
+		$scope.setAriaStatus(ariaMsgs.loadingMoreResults, 0);
+	};
+
+	$scope.displayDetail = function(index, event) {
+		if (event) {
+			if (event.metaKey || event.ctrlKey)
+				return;
+			event.preventDefault();
+		}
+
+		$scope.detailResult = $scope.searchAPIResponse.searchResults[index];
+		if (!$scope.detailResult)
+			return;
+
+		if ($scope.detailResult._record) {
+			$scope.detailResultIndex = index;
+			aisaFeedback.searchResultEvent($scope.searchAPIResponse.term, c.data.rpConfig, $scope.detailResult, aisaFeedback.SEARCH_RESULT_EVENT_CLICK, index + 1);
+			aisaFeedback.sendActionClickAppSeeEvent($scope.detailResult, c.data.rpSysId, {actionId: "aisa_preview"} , c.data.session.domain, index + 1);
+			return;
+		}
+		
+		if ($scope.detailResult.table === 'sc_cat_item') {
+			$http.get("/api/sn_sc/servicecatalog/items/" + $scope.detailResult.sysId).then(
+				function(response) {
+					$scope.detailResult._record = response.data.result;
+					$scope.detailResultIndex = index;
+					aisaFeedback.searchResultEvent($scope.searchAPIResponse.term, c.data.rpConfig, $scope.detailResult, aisaFeedback.SEARCH_RESULT_EVENT_CLICK, index + 1);
+					aisaFeedback.sendActionClickAppSeeEvent($scope.detailResult, c.data.rpSysId, {actionId: "aisa_preview"} , c.data.session.domain, index + 1);
+				},
+				function(response) {
+					// error handler
+				}
+			);
+		} else {
+			$http.get("/api/now/table/" + $scope.detailResult.table + "?sysparm_display_value=all&sysparm_query=sys_id%3D" + $scope.detailResult.sysId).then(
+				function(response) {
+					$scope.detailResult._record = response.data.result[0];
+					$scope.detailResultIndex = index;
+					if($scope.detailResult.table == 'kb_knowledge' && $scope.detailResult._record.text){
+						c.server.get({'action': "get_article_content","articleId":$scope.detailResult.sysId}).then(function(resp){
+							$scope.detailResult._record.text.display_value = resp.data.knowledge_content;
+						});
+						c.server.get({'action': "register_kb_view","articleId":$scope.detailResult.sysId});
+					}
+					aisaFeedback.searchResultEvent($scope.searchAPIResponse.term, c.data.rpConfig, $scope.detailResult, aisaFeedback.SEARCH_RESULT_EVENT_CLICK, index + 1);
+					aisaFeedback.sendActionClickAppSeeEvent($scope.detailResult, c.data.rpSysId, {actionId: "aisa_preview"} , c.data.session.domain, index + 1);
+				},
+				function(response) {
+					// error handler
+				}
+			);
+		}
+	};
+	
+	if (c.data.useAISA) {
+		$scope.$on("$sp.sc_cat_item.rp_submitted", function() {
+			if (!$scope.searchAPIResponse)
+				return;
+
+			aisaFeedback.sendRPSubmitAppSeeEvent($scope.searchAPIResponse.term, c.data.rpSysId, c.data.session.domain);
+		});
+	}
+
+	$scope.getDetailTemplate = function() {
+		var result = $scope.searchAPIResponse.searchResults[$scope.detailResultIndex];
+		if (!result)
+			return null;
+
+		return result.table ? "aisa-detail-" + result.table : "aisa-detail-default";
+	};
+
+	$scope.backToResults = function() {
+		$scope.detailResultIndex = -1;
+	};
+
+	$scope.detailResultNext = function() {
+		if (!$scope.detailResultHasNext())
+			return;
+
+		aisaFeedback.sendNavClickAppSeeEvent(aisaFeedback.NAV_NEXT, c.data.rpSysId, c.data.session.domain);
+		$scope.displayDetail(++$scope.detailResultIndex);
+
+		if ($scope.detailResultIndex >= $scope.getResultsLimit())
+			$scope.getMoreResults();
+	};
+
+	$scope.detailResultPrev = function() {
+		if (!$scope.detailResultHasPrev())
+			return;
+
+		aisaFeedback.sendNavClickAppSeeEvent(aisaFeedback.NAV_PREV, c.data.rpSysId, c.data.session.domain);
+		$scope.displayDetail(--$scope.detailResultIndex);
+	};
+
+	$scope.detailResultHasNext = function() {
+		if (!$scope.searchAPIResponse || !$scope.searchAPIResponse.searchResults || $scope.detailResultIndex < 0)
+			return false;
+
+		return $scope.detailResultIndex < $scope.searchAPIResponse.searchResults.length - 1;
+	};
+
+	$scope.detailResultHasPrev = function() {
+		return $scope.detailResultIndex > 0;
+	};
+
+	$scope.sceTrust = function(html) {
+		return $sce.trustAsHtml(html);
+	};
+
+	$scope.checkResultType = function(result) {
+		if (!result || !REQUESTED_FIELDS.hasOwnProperty(result.table))
+			return false;
+
+		return true;
+	};
+
+	$scope.getSpLink = function(result) {
+		if(!result || !result.table || !result.sysId)
+			return '#';
+		else if(result.table === 'kb_knowledge')
+			return '?id=kb_article&sys_id=' + result.sysId;
+		else if (result.table === 'sc_cat_item')
+			return '?id=sc_cat_item&sys_id=' + result.sysId;
+		return '#';
+	};
+};]]></client_script>
+        <controller_as>c</controller_as>
+        <css>.panel-body { &#13;
+  border: 1px solid $input-border;&#13;
+  border-top-left-radius: 4px; &#13;
+  border-top-right-radius: 4px;&#13;
+  border-bottom-left-radius: 4px; &#13;
+  border-bottom-right-radius: 4px;&#13;
+  padding: 0px 0px 0px 0px;&#13;
+}&#13;
+&#13;
+.row {&#13;
+  margin: 0px;&#13;
+}&#13;
+&#13;
+.aisa-result-container .col-md-12 {&#13;
+  padding: 16px 0px 16px 0px;&#13;
+}&#13;
+&#13;
+.aisa-result-container .col-md-1 {&#13;
+  width: 3%;&#13;
+}&#13;
+&#13;
+.aisa-result-container .col-md-11 {&#13;
+  width: 97%;&#13;
+}&#13;
+&#13;
+.aisa-detail-container {&#13;
+}&#13;
+&#13;
+.aisa-detail-container img {&#13;
+  height: auto;&#13;
+  max-width: 100%;&#13;
+}&#13;
+&#13;
+.aisa-detail-container .article-content {&#13;
+  overflow-wrap: break-word;&#13;
+  word-wrap: break-word;&#13;
+  overflow: auto;&#13;
+}&#13;
+&#13;
+.aisa-detail-container .col-md-12 {&#13;
+  padding: 16px;&#13;
+}&#13;
+&#13;
+.aisa-detail-container hr {&#13;
+  margin-top: 6px;&#13;
+  margin-bottom: 16px;&#13;
+}&#13;
+&#13;
+.aisa-results-panel {  &#13;
+  border-top-left-radius: 4px; &#13;
+  border-top-right-radius: 4px;&#13;
+  border-bottom-left-radius: 4px; &#13;
+  border-bottom-right-radius: 4px;&#13;
+  padding: 0px;&#13;
+  &#13;
+  font-family: "SourceSansPro";&#13;
+  font-weight: 400;&#13;
+}&#13;
+&#13;
+.aisa-results-title-bar {&#13;
+  border-top-left-radius: 4px; &#13;
+  border-top-right-radius: 4px;&#13;
+  padding: 6px 12px 6px 12px;&#13;
+  border-bottom: 1px solid $input-border;&#13;
+  background-color: $input-bg-disabled;&#13;
+}&#13;
+&#13;
+.aisa-results {&#13;
+  padding: 6px 12px 6px 12px;&#13;
+}&#13;
+&#13;
+.aisa-result-snippet {&#13;
+  font-size: 14px;&#13;
+  color: $text-muted;&#13;
+  overflow-wrap: break-word;&#13;
+  word-wrap: break-word;&#13;
+}&#13;
+&#13;
+.aisa-results-title {&#13;
+  font-size: 14px;&#13;
+  color: $text-primary;&#13;
+  font-weight: 600;&#13;
+}&#13;
+&#13;
+span.aisa-result-icon {&#13;
+  padding-right: 8px;&#13;
+}&#13;
+&#13;
+.aisa-result-icon i {&#13;
+  color: #86c0fd;&#13;
+  font-size: 20px;&#13;
+}&#13;
+&#13;
+.aisa-result-icon i.push {&#13;
+	margin-top: 3px;&#13;
+}&#13;
+&#13;
+.aisa-ua-action-bar {&#13;
+	margin-top: 1rem;&#13;
+}&#13;
+&#13;
+.aisa-ua-button-spacing {&#13;
+	margin-right: 1rem;&#13;
+}&#13;
+&#13;
+div.aisa-detail-header {&#13;
+  border-bottom: 1px solid $input-border;&#13;
+}&#13;
+&#13;
+.aisa-result-title {&#13;
+  font-weight: 600;&#13;
+  font-size: 16px;&#13;
+  color: $text-color;&#13;
+  overflow-wrap: break-word;&#13;
+  word-wrap: break-word;&#13;
+}&#13;
+&#13;
+.aisa-result-breadcrumbs {&#13;
+  font-size: 13px;&#13;
+  color: $text-muted;&#13;
+}&#13;
+&#13;
+.aisa-icon-star {&#13;
+  font-size: 10px;&#13;
+  line-height: 18px;&#13;
+  vertical-align: middle;&#13;
+  margin-right: 3px;&#13;
+}&#13;
+&#13;
+.aisa-icon-star-empty {&#13;
+  font-size: 10px;&#13;
+  line-height: 18px;&#13;
+  vertical-align: middle;&#13;
+  margin-right: 3px;&#13;
+}&#13;
+&#13;
+.aisa-meta-row {&#13;
+   line-height: 0.8;&#13;
+}&#13;
+&#13;
+.aisa-ec-chevron {&#13;
+    font-size: 12px;&#13;
+}&#13;
+&#13;
+.aisa-meta_row .aisa-article-info {&#13;
+  display: block;&#13;
+}&#13;
+&#13;
+ul.aisa-article-info {&#13;
+  padding: 0px;&#13;
+  margin: 4px 0px 0px 0px;&#13;
+  font-size: 13px;&#13;
+}&#13;
+&#13;
+ul.aisa-article-info &gt; li:first-child {&#13;
+  margin-left: 0px;&#13;
+}&#13;
+&#13;
+ul.aisa-article-info li {&#13;
+  margin-right: 0px;&#13;
+  margin-left: 0px;&#13;
+  display: inline;&#13;
+}&#13;
+&#13;
+.aisa-article-info li::before {&#13;
+  content: "\2022"&#13;
+}&#13;
+&#13;
+ul.aisa-article-info &gt; li:first-child::before {&#13;
+  content: ""&#13;
+}&#13;
+&#13;
+ul.aisa-article-info &gt; li:first-child span.aisa-article-label {&#13;
+  margin-left: 0px;&#13;
+}&#13;
+&#13;
+.aisa-article-label {&#13;
+  margin-left: 0px;&#13;
+  margin-right: 0px;&#13;
+}&#13;
+&#13;
+.aisa-article-value {&#13;
+  margin-left: 0px;&#13;
+  margin-right: 0px;&#13;
+}&#13;
+&#13;
+.aisa-rating-readonly {&#13;
+  height: 18px;&#13;
+  line-height: 18px;&#13;
+  display: inline-block;&#13;
+}&#13;
+&#13;
+.b {&#13;
+  border: 0px solid transparent&#13;
+}&#13;
+&#13;
+div.aisa-result-title, div.aisa-meta-row {&#13;
+  padding-bottom: 8px;&#13;
+}&#13;
+&#13;
+.aisa-button-bar {&#13;
+  height: 45px;&#13;
+  line-height: 45px;&#13;
+  white-space: nowrap;&#13;
+}&#13;
+&#13;
+.aisa-button-bar button {&#13;
+	vertical-align: middle;&#13;
+}&#13;
+&#13;
+.aisa-results-button-bar {&#13;
+  height: 45px;&#13;
+  line-height: 45px;&#13;
+  text-align: center;&#13;
+  margin-bottom: 10px;&#13;
+}&#13;
+&#13;
+button.aisa-ua-detail {&#13;
+  line-height: 14px;&#13;
+  margin: 0px 8px 0px 0px;&#13;
+}&#13;
+&#13;
+span.aisa-ua-detail-label {&#13;
+  vertical-align: middle;&#13;
+  font-size: 14px;&#13;
+  text-decoration: underline;&#13;
+}&#13;
+&#13;
+i:before {&#13;
+  vertical-align: baseline;&#13;
+}&#13;
+&#13;
+img.aisa-result-image, img.aisa-record-image {&#13;
+  width: 100%;&#13;
+}&#13;
+&#13;
+.icon-star {&#13;
+  color: gold;&#13;
+  font-size: 10px;&#13;
+}&#13;
+&#13;
+.icon-star-empty {&#13;
+  color: #343D47;&#13;
+  font-size: 10px;&#13;
+}&#13;
+&#13;
+.aisa-results-panel &gt; .panel-heading { display: none; }&#13;
+&#13;
+#ka-accordion .panel-heading { display: block; }&#13;
+&#13;
+.side-box {&#13;
+  margin: 0 0;&#13;
+  border: $gray-light 1px solid;&#13;
+}&#13;
+&#13;
+.side-box .box {&#13;
+  padding: 5px;&#13;
+  display: inline-block;&#13;
+  width: 49%;&#13;
+}&#13;
+&#13;
+.side-box .box:nth-child(2) {&#13;
+  border-left: $gray-light 1px solid;&#13;
+}&#13;
+&#13;
+.side-box .box .number-box {&#13;
+  direction: ltr;&#13;
+  padding-top: 2px;&#13;
+  padding-bottom: 2px;&#13;
+  font-size: 20px;&#13;
+  text-align: center;&#13;
+  color: $gray-base;&#13;
+}&#13;
+&#13;
+.side-box .box .text-box {&#13;
+  font-size: 11px;&#13;
+  color: $gray-light;&#13;
+  text-align: center;&#13;
+}&#13;
+&#13;
+.btn-icon {&#13;
+  background: none;&#13;
+  padding: 3px;&#13;
+  border: none;&#13;
+  border-top-color: initial;&#13;
+  border-top-style: none;&#13;
+  border-top-width: initial;&#13;
+  border-right-color: initial;&#13;
+  border-right-style: none;&#13;
+  border-right-width: initial;&#13;
+  border-bottom-color: initial;&#13;
+  border-bottom-style: none;&#13;
+  border-bottom-width: initial;&#13;
+  border-left-color: initial;&#13;
+  border-left-style: none;&#13;
+  border-left-width: initial;&#13;
+  border-image-source: initial;&#13;
+  border-image-slice: initial;&#13;
+  border-image-width: initial;&#13;
+  border-image-outset: initial;&#13;
+  border-image-repeat: initial;&#13;
+}&#13;
+&#13;
+.aisa-preview-button {&#13;
+  font-size: 20px;&#13;
+}&#13;
+&#13;
+.aisa-lozenge {&#13;
+  color: $btn-primary-color;&#13;
+  font-size: 11px;&#13;
+  background-color: #3d89cb;&#13;
+  padding: 2px 6px 2px 6px;&#13;
+  margin-left: 10px;&#13;
+  border-radius: 5px;&#13;
+}&#13;
+&#13;
+.aisa-record-short-description {&#13;
+  overflow-wrap: break-word;&#13;
+  word-wrap: break-word; &#13;
+}&#13;
+&#13;
+#sp_cxs_aisa_aria_status {&#13;
+	font-size: 0 !important;&#13;
+}&#13;
+&#13;
+@media screen and (max-width: 992px) {&#13;
+  div.aisa-result-icon.col-md-1 {&#13;
+    display: none;&#13;
+  }&#13;
+  .aisa-ua-wide {&#13;
+    display: none;&#13;
+  }&#13;
+}&#13;
+&#13;
+@media screen and (min-width: 992px) {&#13;
+  span.aisa-result-icon {&#13;
+  	display: none;&#13;
+  }&#13;
+  .aisa-button-bar-narrow {&#13;
+    display: none;&#13;
+  }&#13;
+}&#13;
+</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>at_assistant</id>
+        <internal>false</internal>
+        <link><![CDATA[function link($scope, el, attrs, controller) {
+		/*
+			We can use angular expressions for the below funtionalities. But JAWS is reading angular expressions on live regions.
+			so we are manipulating directly DOM.
+		*/
+		var timerPromise;
+		$scope.ariaStatus = '';
+		var $timeout = $injector.get('$timeout');
+		function updateAriaStatus(msg) {
+			var target = $(el).find('#sp_cxs_aisa_aria_status')[0];
+			$scope.ariaStatus = msg; 
+			target.innerHTML = '<div>' +$('<div>', { text:msg }).html() + '</div>';
+		}
+
+		$scope.setAriaStatus = function(msg, delay) {
+			delay = delay || 0;
+			if(delay == 0 || timerPromise)
+				$timeout.cancel(timerPromise);
+
+			(function(val) {
+				timerPromise = $timeout(function() {
+					timerPromise = undefined;
+					updateAriaStatus(val);
+				}, delay);
+			})(msg);
+		};
+
+		$scope.setAriaStatus(scope.c.data.ariaMsgs.noResultsToDisplay);
+	}
+]]></link>
+        <name>AutoTrack Assistant</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+    if (!input) {
+		var rpUtils = new AISARecordProducerUtils();
+		var actionUtils = new AISAActionUtils();
+		var rpSysId = options.cat_item || $sp.getParameter("sys_id");
+		var aisaEnabled = rpUtils.useAISARecordProducerConfig(rpSysId);
+		var portalPage = $sp.getPortalRecord();
+		var user = new GlideRecord('sys_user');
+		user.get(gs.getUserID());
+
+		var aisPortalEnabled = portalPage && !!portalPage.enable_ais;
+		var isMesp = rpUtils.isMesp(portalPage.getUniqueValue());
+		if (isMesp)
+			aisPortalEnabled = portalPage && (rpUtils.getNowMobileSearchEngine() == 'ai_search');
+		
+		data.useAISA = aisaEnabled && aisPortalEnabled;
+		data.rpSysId = rpSysId;
+		data.isLocationTrackerDisabled = (gs.getProperty('glide.service_portal.disable_location_tracker') == "true") || false;
+		data.session = {
+			userId: gs.getUserID(),
+			language: gs.getSession().getLanguage(),
+			domain: (GlidePluginManager.isActive('com.glide.domain') && user.isValidRecord() ? user.getDisplayValue('company') : '')
+		};
+
+		data.rpConfig = rpUtils.getRPConfigByRPId(rpSysId);
+
+		if (!GlidePluginManager.isActive('com.glide.domain'))
+			data.aisaProperties = {
+				wait_time: parseInt(gs.getProperty('com.snc.ai_search_assist.wait_time', 500)),
+				min_length: parseInt(gs.getProperty('com.snc.ai_search_assist.min_length', 3))
+			};
+		else
+			data.aisaProperties = {
+				wait_time: parseInt(GlideApplicationProperty.getValue('com.snc.ai_search_assist.wait_time')),
+				min_length: parseInt(GlideApplicationProperty.getValue('com.snc.ai_search_assist.min_length'))
+			};
+		
+		data.kbProperties = {
+			show_author: (gs.getProperty("glide.knowman.search.show_author", false) == "true") || false,
+			show_article_number: (gs.getProperty("glide.knowman.search.show_article_number", false) == "true") || false,
+			show_category: (gs.getProperty("glide.knowman.search.show_category", false) == "true") || false,
+			show_relevance: (gs.getProperty("glide.knowman.search.show_relevancy", false) == "true") || false,
+			show_last_modified: (gs.getProperty("glide.knowman.search.show_last_modified", false) =="true") || false,
+			show_published: (gs.getProperty("glide.knowman.search.show_published", false) == "true") || false,
+			show_unpublished: (gs.getProperty("glide.knowman.show_unpublished", false) == "true") || false,
+			show_view_count: (gs.getProperty("glide.knowman.search.show_view_count", false) == "true") || false,
+			show_rating: (gs.getProperty("glide.knowman.search.show_rating", false) == "true") || false
+		};
+		data.ariaMsgs = {
+			searchCompleted: gs.getMessage("Showing {0} search results based on field {1}"),
+			searching: gs.getMessage("Searching for {0}"),
+			loadingMoreResults: gs.getMessage("Loading more results"),
+			resultsLoaded: gs.getMessage("More results loaded"),
+			allResultsLoaded: gs.getMessage("Showing all {0} search results"),
+			noMatchingResults: gs.getMessage("No matching results found for {0}"),
+			noResultsToDisplay: gs.getMessage("No results to display")
+		};
+		data.i18nMsgs = {
+			'KB_VIEW': gs.getMessage("{0} view"),
+			'KB_VIEWS': gs.getMessage("{0} views"),
+			'RATING': gs.getMessage("{0} star rating"),
+			'NO_RATING': gs.getMessage("No rating"),
+			'CLICK_HERE': gs.getMessage("Click here to view this result. This result will open in a new window.")
+		};
+	}
+	if(input) {
+		if(input.action == "get_article_content"){
+			data.knowledge_content =  new KBViewModel().getArticleContentBySysId(input.articleId);
+		}
+
+		if(input.action == "register_kb_view" && input.articleId){
+			var kb = new GlideRecordSecure("kb_knowledge");
+			if (kb.get(input.articleId)) {
+				data.viewCount = parseInt(kb.getValue('sys_view_count')) + 1;
+
+				var paramObj = {};
+				paramObj["glideSessionId"] = gs.getSessionID();
+				paramObj["displayVal"] = kb.getDisplayValue();
+				paramObj["domainId"] = gs.getSession().getCurrentDomainID();
+				if(input.tsQueryId)
+					paramObj["ts_query_id"] = input.tsQueryId;
+
+				new KBViewModel().increaseKBView(kb);
+				gs.eventQueue('kb.view', kb, JSON.stringify(paramObj), gs.getUserID());
+			}
+		}
+	}
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-11-03 03:46:00</sys_created_on>
+        <sys_id>27ac78a0c341b2109f0231cc05013126</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>AutoTrack Assistant</sys_name>
+        <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Loaner Vehicle Application">a2b8a412c31072109f0231cc050131b7</sys_scope>
+        <sys_update_name>sp_widget_27ac78a0c341b2109f0231cc05013126</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-11-08 05:46:36</sys_updated_on>
+        <template><![CDATA[<sp-panel class="aisa-results-panel" ng-show="c.data.useAISA && resultsPageIndex >= 0">
+	<div class="aisa-results-title-bar" ng-if="ALLOW_EXPAND_COLLAPSE" ng-click="toggleContainer()">
+		<span class="aisa-results-title">
+			{{HEADER_TEXT}} &nbsp;
+			<i ng-class="['aisa-ec-chevron','fa',{'fa-chevron-down': isContainerCollapsed, 'fa-chevron-up': !isContainerCollapsed}]" ng-if="ALLOW_EXPAND_COLLAPSE"></i>
+		</span>
+	</div>
+  <div class="aisa-results-title-bar" ng-if="!ALLOW_EXPAND_COLLAPSE">
+		<span class="aisa-results-title">
+			{{HEADER_TEXT}}
+		</span>
+	</div>
+  <!-- Display Search Result List -->
+  <div class="aisa-results" ng-if="!isContainerCollapsed && detailResultIndex < 0">
+		<div ng-if="checkResultType(result)" ng-repeat="result in searchAPIResponse.searchResults | limitTo:getResultsLimit()" class="m-b">
+      <ng-include src="getResultTemplate(result)" />
+		</div>
+    <div class="row aisa-results-button-bar col-md-12" ng-if="hasMoreResults()">
+      <button class="btn btn-default" ng-click="getMoreResults()" aria-label="${Shows more search results}">${Show more}</button>
+    </div>
+    <!-- Display message if no Search Results returned -->
+    <div ng-if="!searchAPIResponse.searchResults || searchAPIResponse.searchResults.length === 0">
+      ${No matching results found for {{searchAPIResponse.term}}}
+    </div>
+	</div>
+  <!-- Display Search Result Detail -->
+  <div ng-if="!isContainerCollapsed && detailResultIndex >= 0">
+    <div><ng-include src="'aisa-detail-header'" /></div>
+    <div class="row col-md-12">
+  		<ng-include src="getDetailTemplate()" />
+   	</div>
+	</div>
+</sp-panel>
+<!-- Start - Accessibility specific DOM -->
+<div id="sp_cxs_aisa_aria_status" aria-live="assertive" aria-atomic = "true">
+</div>
+<!--End - Accessibility specific DOM -->]]></template>
+    </sp_widget>
+</record_update>

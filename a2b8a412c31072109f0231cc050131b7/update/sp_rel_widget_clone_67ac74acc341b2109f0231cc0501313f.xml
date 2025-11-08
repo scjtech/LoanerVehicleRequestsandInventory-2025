@@ -1,0 +1,911 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_rel_widget_clone">
+    <sp_rel_widget_clone action="INSERT_OR_UPDATE">
+        <child display_value="Copy of AI Search Assist">27ac78a0c341b2109f0231cc05013126</child>
+        <cloned>2025-11-03 03:46:01</cloned>
+        <last_validated>2025-11-03 03:46:01</last_validated>
+        <parent display_value="AI Search Assist">66135172671e1010b3d782f45685ef9e</parent>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;sp_widget&gt;&lt;category&gt;custom&lt;/category&gt;&lt;client_script&gt;&lt;![CDATA[api.controller=function($scope, $rootScope, $timeout, $http, $sce, spUtil, aisaUtils, aisaSearch, aisaAction, aisaFeedback, i18n) {
+	var c = this;
+
+	if (!c.data.useAISA) 
+		$('#ai_search_assist').css('display', 'none');
+	
+	var ARIA_MSG_GAP = 1000;
+	var ariaMsgs = c.data.ariaMsgs;
+	var REQUESTED_FIELDS = {
+		"kb_knowledge": ["sys_class_name", "number", "short_description", "description", "sys_view_count", "kb_knowledge_base", "kb_category", "author", "published", "text", "rating", "display_attachments","sys_updated_on"],
+		"sc_cat_item": ["sys_class_name", "name", "short_description", "description", "category", "picture"]
+	};
+
+	$scope.i18n = i18n;
+	$scope.i18nMsgs = c.data.i18nMsgs;
+	$scope.getResultField = aisaUtils.getResultField;
+
+	if (c.data.rpConfig) {
+		$scope.HEADER_TEXT = c.data.rpConfig.headerText;
+		$scope.ALLOW_EXPAND_COLLAPSE = c.data.rpConfig.allowExpandCollapse;
+		$scope.RESULTS_PER_PAGE = c.data.rpConfig.resultsPerPage;
+		var searchField = $scope.page.g_form.getField("IO:" + c.data.rpConfig.searchVariable);
+		$scope.trigger = {
+			field: searchField,
+			element: document.getElementById('sp_formfield_'+searchField.name)
+		};
+	}
+
+	$scope.initializeWidget = function() {
+		if (window.GlideSignals)
+			initializeGlideSignals();
+		else {
+			$rootScope.$on("sp.defer_scripts.loaded", function(){
+				if (window.GlideSignals)
+					initializeGlideSignals();
+			});
+		}
+
+		if (!c.data.isLocationTrackerDisabled) {
+			setUserLocationCoords(function(coords) {
+				c.latitude = coords.latitude;
+				c.longitude = coords.longitude;
+			});
+		}
+		/**
+		 * searchResponsePending: set to true everytime a request is submitted, and false when response is received
+		 * @type {boolean}
+		 */
+		$scope.searchResponsePending = false;
+		/**
+		 * Stores the delayed search term when search response is pending.
+		 * And will be used to trigger a search when response returns
+		 * @type {string}
+		 */
+		$scope.delayedSearchTerm = null;
+		$scope.resetWidgetForEmptySearch();
+		/**
+		 * object for holding mapping from result sys id to a list of action objects
+		 * Value updated everytime search returns: searchSuccessHandler
+		 * @type {object}
+		 */
+		$scope.actionMap = {};
+	};
+
+	function initializeGlideSignals() {
+		if (!c.data.isLocationTrackerDisabled &amp;&amp; window.GlideSignals.init) {
+			window.GlideSignals.init();
+		}
+
+		if (window.GlideSignals.trackEvent)
+			c.isGlideSignalsLoaded = true;
+
+		$rootScope.GlideSignals = GlideSignals;
+	}
+
+	function setUserLocationCoords(cb) {
+		var onSuccess = function(pos) {
+			return cb({
+				latitude: pos.coords.latitude,
+				longitude: pos.coords.longitude
+			});
+		};
+		var onError = function() {
+			return cb({
+				latitude: null,
+				longitude: null	
+			});
+		};
+		return window.navigator.geolocation.getCurrentPosition(onSuccess, onError, {
+			enableHighAccuracy: true
+		});
+	}
+
+	$scope.resetWidgetForEmptySearch = function() {
+		$scope.resultsPageIndex = -1;
+		$scope.detailResultIndex = -1;
+		$scope.isContainerCollapsed = false;
+	};
+
+	$scope.initializeWidget();
+
+	/**
+	 * Construct and submit a search request
+	 * @param {string} newValue the search term
+	 */
+	function search(trimmedNewValue) {
+		$scope.setAriaStatus(i18n.format(ariaMsgs.searching, trimmedNewValue), 0);
+
+		var searchRequest = aisaSearch.newSearchRequest({
+			searchApp: c.data.rpConfig.searchApp,
+			searchTerm: trimmedNewValue,
+			requestedFields: REQUESTED_FIELDS,
+			rpSysId: c.data.rpSysId
+		});
+
+		$scope.searchResponsePending = true;
+		// Submit search request and handle results returned from promise
+		searchRequest.submit().then(searchSuccessHandler, searchFailureHandler);
+	}
+	/**
+	 * construct a map from result sysId to list of actions.
+	 * resultsActionsMap and availableActions are part of search response
+	 *
+	 * @param {object} resultsActionsMap: in shape of {resultSysId: [actionSysId]}
+	 * @param {object} availableActions: in shape of {actionSysId: {actionObj}}
+	 *
+	 * @return {object} actionMap: in shape of {resultSysId: [{action object}]}
+	 */
+	function getResultActions(resultsActionsMap, availableActions) {
+		var resultActions = {};
+		for (var result in resultsActionsMap) {
+			resultActions[result] = [];
+			for (var i in resultsActionsMap[result]) {
+				var actionSysId = resultsActionsMap[result][i];
+				if (!availableActions[actionSysId])
+					continue;
+				resultActions[result].push(availableActions[actionSysId]);
+			}
+		}
+		return resultActions;
+	}
+
+	function searchSuccessHandler(response) {
+		$scope.searchResponsePending = false;
+		$scope.searchAPIResponse = response.search;
+		var searchResults = $scope.searchAPIResponse.searchResults;
+		if (searchResults &amp;&amp; searchResults.length &gt; 0) {
+			var resultCount = searchResults.length || '';
+			if ($scope.hasMoreResults())
+				$scope.setAriaStatus(i18n.format(ariaMsgs.searchCompleted, resultCount, $scope.trigger.field.label), ARIA_MSG_GAP);
+			else
+				$scope.setAriaStatus(i18n.format(ariaMsgs.allResultsLoaded, resultCount), ARIA_MSG_GAP);
+		} else
+			$scope.setAriaStatus(i18n.format(ariaMsgs.noMatchingResults, response.search.term), ARIA_MSG_GAP);
+		$scope.resultsPageIndex = 0;
+		$scope.actionMap = getResultActions(response.resultsActionsMap, response.availableActions);
+		aisaFeedback.searchEvent($scope.searchAPIResponse.term, c.data.rpConfig, $scope.searchAPIResponse.searchResults, c.data.session);
+		aisaFeedback.sendSearchAppSeeEvent($scope.searchAPIResponse.term, c.data.rpSysId, $scope.searchAPIResponse.responseTimeInMs, c.data.session.domain);
+
+		if ($scope.delayedSearchTerm)
+			searchUponTriggerValueChange($scope.delayedSearchTerm, null);
+	}
+
+	function searchFailureHandler(response) {
+		$scope.searchResponsePending = false;
+	}
+
+	/**
+	 * Event handler for field value change, and triggers a debounced search
+	 * @param {string} newValue
+	 * @param {string} oldValue
+	 */
+	function searchUponTriggerValueChange(newValue, oldValue) {
+		preSearchValidation(newValue, false);
+	}
+
+	function preSearchValidation(newValue, forceImmediateSearch) {
+		$scope.delayedSearchTerm = null;
+		if ($scope.trigger.timeout)
+			$timeout.cancel($scope.trigger.timeout);
+
+		if (!newValue) {
+			$scope.resetWidgetForEmptySearch();
+			return;
+		}
+
+		var trimmedNewValue = newValue.trim();
+		var charLength = trimmedNewValue.replace(/\s/g,'').length;
+		if (!trimmedNewValue || charLength &lt; c.data.aisaProperties.min_length) {
+			$scope.resetWidgetForEmptySearch();
+			$scope.setAriaStatus(ariaMsgs.noResultsToDisplay, 0);
+			return;
+		}
+
+		if ($scope.searchAPIResponse &amp;&amp; $scope.searchAPIResponse.term === trimmedNewValue) {
+			$scope.resultsPageIndex = 0;
+			return;
+		}
+
+		if (forceImmediateSearch){
+			search(trimmedNewValue);
+			return;
+		}
+
+		if ($scope.searchResponsePending) {
+			$scope.delayedSearchTerm = trimmedNewValue;
+			return;
+		}
+		if (c.data.aisaProperties.wait_time &gt;= 0)
+			$scope.trigger.timeout = $timeout(search, c.data.aisaProperties.wait_time, true, trimmedNewValue);
+	}
+	
+	if (c.data.useAISA &amp;&amp; $scope.trigger) {
+		$scope.$watch("trigger.field.stagedValue", searchUponTriggerValueChange);
+		if ($scope.trigger.element)
+			$scope.trigger.element.addEventListener('blur', function(event) {
+				preSearchValidation($scope.trigger.field.stagedValue, true);
+			});
+	}
+
+	$scope.execAction = function(action, resultRecord, index) {
+		var commonFeedbackData = aisaFeedback.getCommonEventData($scope.searchAPIResponse.term, c.data.rpConfig);
+		aisaAction.execAction(action, resultRecord, commonFeedbackData, null, null, c.data.session.domain, c.data.rpSysId, index + 1);
+	};
+
+	$scope.toggleContainer = function() {
+		$scope.isContainerCollapsed = !$scope.isContainerCollapsed;
+	};
+
+	$scope.getResultTemplate = function(result) {
+		if (!result)
+			return null;
+
+		return (result.table) ? "aisa-result-" + result.table : "aisa-result-default";
+	};
+
+	$scope.getLocaleDateString = function(input) {
+		return new Date(input).toLocaleDateString();
+	};
+
+	$scope.getRatingDesc = function(rating) {
+		rating = $scope.getRating(rating);
+		if (rating == 0)
+			return $scope.i18nMsgs.NO_RATING;
+
+		return i18n.format(c.data.i18nMsgs.RATING, $scope.getRating(rating));
+	};
+
+	$scope.getRating = function(rating) {
+		return Math.round(rating || 0);
+	};
+
+	$scope.getResultsLimit = function() {
+		if ($scope.resultsPageIndex &lt; 0)
+			return -1;
+
+		return (1 + $scope.resultsPageIndex) * $scope.RESULTS_PER_PAGE;
+	};
+
+	$scope.hasMoreResults = function() {
+		if ($scope.resultsPageIndex &lt; 0)
+			return false;
+		
+		if (!$scope.searchAPIResponse.searchResults)
+			return false;
+		
+		return $scope.searchAPIResponse.searchResults.length &gt; $scope.getResultsLimit();
+	};
+
+	$scope.getMoreResults = function() {
+		$scope.resultsPageIndex ++;
+		$scope.setAriaStatus(ariaMsgs.loadingMoreResults, 0);
+	};
+
+	$scope.displayDetail = function(index, event) {
+		if (event) {
+			if (event.metaKey || event.ctrlKey)
+				return;
+			event.preventDefault();
+		}
+
+		$scope.detailResult = $scope.searchAPIResponse.searchResults[index];
+		if (!$scope.detailResult)
+			return;
+
+		if ($scope.detailResult._record) {
+			$scope.detailResultIndex = index;
+			aisaFeedback.searchResultEvent($scope.searchAPIResponse.term, c.data.rpConfig, $scope.detailResult, aisaFeedback.SEARCH_RESULT_EVENT_CLICK, index + 1);
+			aisaFeedback.sendActionClickAppSeeEvent($scope.detailResult, c.data.rpSysId, {actionId: "aisa_preview"} , c.data.session.domain, index + 1);
+			return;
+		}
+		
+		if ($scope.detailResult.table === 'sc_cat_item') {
+			$http.get("/api/sn_sc/servicecatalog/items/" + $scope.detailResult.sysId).then(
+				function(response) {
+					$scope.detailResult._record = response.data.result;
+					$scope.detailResultIndex = index;
+					aisaFeedback.searchResultEvent($scope.searchAPIResponse.term, c.data.rpConfig, $scope.detailResult, aisaFeedback.SEARCH_RESULT_EVENT_CLICK, index + 1);
+					aisaFeedback.sendActionClickAppSeeEvent($scope.detailResult, c.data.rpSysId, {actionId: "aisa_preview"} , c.data.session.domain, index + 1);
+				},
+				function(response) {
+					// error handler
+				}
+			);
+		} else {
+			$http.get("/api/now/table/" + $scope.detailResult.table + "?sysparm_display_value=all&amp;sysparm_query=sys_id%3D" + $scope.detailResult.sysId).then(
+				function(response) {
+					$scope.detailResult._record = response.data.result[0];
+					$scope.detailResultIndex = index;
+					if($scope.detailResult.table == 'kb_knowledge' &amp;&amp; $scope.detailResult._record.text){
+						c.server.get({'action': "get_article_content","articleId":$scope.detailResult.sysId}).then(function(resp){
+							$scope.detailResult._record.text.display_value = resp.data.knowledge_content;
+						});
+						c.server.get({'action': "register_kb_view","articleId":$scope.detailResult.sysId});
+					}
+					aisaFeedback.searchResultEvent($scope.searchAPIResponse.term, c.data.rpConfig, $scope.detailResult, aisaFeedback.SEARCH_RESULT_EVENT_CLICK, index + 1);
+					aisaFeedback.sendActionClickAppSeeEvent($scope.detailResult, c.data.rpSysId, {actionId: "aisa_preview"} , c.data.session.domain, index + 1);
+				},
+				function(response) {
+					// error handler
+				}
+			);
+		}
+	};
+	
+	if (c.data.useAISA) {
+		$scope.$on("$sp.sc_cat_item.rp_submitted", function() {
+			if (!$scope.searchAPIResponse)
+				return;
+
+			aisaFeedback.sendRPSubmitAppSeeEvent($scope.searchAPIResponse.term, c.data.rpSysId, c.data.session.domain);
+		});
+	}
+
+	$scope.getDetailTemplate = function() {
+		var result = $scope.searchAPIResponse.searchResults[$scope.detailResultIndex];
+		if (!result)
+			return null;
+
+		return result.table ? "aisa-detail-" + result.table : "aisa-detail-default";
+	};
+
+	$scope.backToResults = function() {
+		$scope.detailResultIndex = -1;
+	};
+
+	$scope.detailResultNext = function() {
+		if (!$scope.detailResultHasNext())
+			return;
+
+		aisaFeedback.sendNavClickAppSeeEvent(aisaFeedback.NAV_NEXT, c.data.rpSysId, c.data.session.domain);
+		$scope.displayDetail(++$scope.detailResultIndex);
+
+		if ($scope.detailResultIndex &gt;= $scope.getResultsLimit())
+			$scope.getMoreResults();
+	};
+
+	$scope.detailResultPrev = function() {
+		if (!$scope.detailResultHasPrev())
+			return;
+
+		aisaFeedback.sendNavClickAppSeeEvent(aisaFeedback.NAV_PREV, c.data.rpSysId, c.data.session.domain);
+		$scope.displayDetail(--$scope.detailResultIndex);
+	};
+
+	$scope.detailResultHasNext = function() {
+		if (!$scope.searchAPIResponse || !$scope.searchAPIResponse.searchResults || $scope.detailResultIndex &lt; 0)
+			return false;
+
+		return $scope.detailResultIndex &lt; $scope.searchAPIResponse.searchResults.length - 1;
+	};
+
+	$scope.detailResultHasPrev = function() {
+		return $scope.detailResultIndex &gt; 0;
+	};
+
+	$scope.sceTrust = function(html) {
+		return $sce.trustAsHtml(html);
+	};
+
+	$scope.checkResultType = function(result) {
+		if (!result || !REQUESTED_FIELDS.hasOwnProperty(result.table))
+			return false;
+
+		return true;
+	};
+
+	$scope.getSpLink = function(result) {
+		if(!result || !result.table || !result.sysId)
+			return '#';
+		else if(result.table === 'kb_knowledge')
+			return '?id=kb_article&amp;sys_id=' + result.sysId;
+		else if (result.table === 'sc_cat_item')
+			return '?id=sc_cat_item&amp;sys_id=' + result.sysId;
+		return '#';
+	};
+};]]&gt;&lt;/client_script&gt;&lt;controller_as&gt;c&lt;/controller_as&gt;&lt;css&gt;.panel-body { &amp;#13;
+  border: 1px solid $input-border;&amp;#13;
+  border-top-left-radius: 4px; &amp;#13;
+  border-top-right-radius: 4px;&amp;#13;
+  border-bottom-left-radius: 4px; &amp;#13;
+  border-bottom-right-radius: 4px;&amp;#13;
+  padding: 0px 0px 0px 0px;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.row {&amp;#13;
+  margin: 0px;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-result-container .col-md-12 {&amp;#13;
+  padding: 16px 0px 16px 0px;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-result-container .col-md-1 {&amp;#13;
+  width: 3%;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-result-container .col-md-11 {&amp;#13;
+  width: 97%;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-detail-container {&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-detail-container img {&amp;#13;
+  height: auto;&amp;#13;
+  max-width: 100%;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-detail-container .article-content {&amp;#13;
+  overflow-wrap: break-word;&amp;#13;
+  word-wrap: break-word;&amp;#13;
+  overflow: auto;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-detail-container .col-md-12 {&amp;#13;
+  padding: 16px;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-detail-container hr {&amp;#13;
+  margin-top: 6px;&amp;#13;
+  margin-bottom: 16px;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-results-panel {  &amp;#13;
+  border-top-left-radius: 4px; &amp;#13;
+  border-top-right-radius: 4px;&amp;#13;
+  border-bottom-left-radius: 4px; &amp;#13;
+  border-bottom-right-radius: 4px;&amp;#13;
+  padding: 0px;&amp;#13;
+  &amp;#13;
+  font-family: "SourceSansPro";&amp;#13;
+  font-weight: 400;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-results-title-bar {&amp;#13;
+  border-top-left-radius: 4px; &amp;#13;
+  border-top-right-radius: 4px;&amp;#13;
+  padding: 6px 12px 6px 12px;&amp;#13;
+  border-bottom: 1px solid $input-border;&amp;#13;
+  background-color: $input-bg-disabled;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-results {&amp;#13;
+  padding: 6px 12px 6px 12px;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-result-snippet {&amp;#13;
+  font-size: 14px;&amp;#13;
+  color: $text-muted;&amp;#13;
+  overflow-wrap: break-word;&amp;#13;
+  word-wrap: break-word;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-results-title {&amp;#13;
+  font-size: 14px;&amp;#13;
+  color: $text-primary;&amp;#13;
+  font-weight: 600;&amp;#13;
+}&amp;#13;
+&amp;#13;
+span.aisa-result-icon {&amp;#13;
+  padding-right: 8px;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-result-icon i {&amp;#13;
+  color: #86c0fd;&amp;#13;
+  font-size: 20px;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-result-icon i.push {&amp;#13;
+	margin-top: 3px;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-ua-action-bar {&amp;#13;
+	margin-top: 1rem;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-ua-button-spacing {&amp;#13;
+	margin-right: 1rem;&amp;#13;
+}&amp;#13;
+&amp;#13;
+div.aisa-detail-header {&amp;#13;
+  border-bottom: 1px solid $input-border;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-result-title {&amp;#13;
+  font-weight: 600;&amp;#13;
+  font-size: 16px;&amp;#13;
+  color: $text-color;&amp;#13;
+  overflow-wrap: break-word;&amp;#13;
+  word-wrap: break-word;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-result-breadcrumbs {&amp;#13;
+  font-size: 13px;&amp;#13;
+  color: $text-muted;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-icon-star {&amp;#13;
+  font-size: 10px;&amp;#13;
+  line-height: 18px;&amp;#13;
+  vertical-align: middle;&amp;#13;
+  margin-right: 3px;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-icon-star-empty {&amp;#13;
+  font-size: 10px;&amp;#13;
+  line-height: 18px;&amp;#13;
+  vertical-align: middle;&amp;#13;
+  margin-right: 3px;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-meta-row {&amp;#13;
+   line-height: 0.8;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-ec-chevron {&amp;#13;
+    font-size: 12px;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-meta_row .aisa-article-info {&amp;#13;
+  display: block;&amp;#13;
+}&amp;#13;
+&amp;#13;
+ul.aisa-article-info {&amp;#13;
+  padding: 0px;&amp;#13;
+  margin: 4px 0px 0px 0px;&amp;#13;
+  font-size: 13px;&amp;#13;
+}&amp;#13;
+&amp;#13;
+ul.aisa-article-info &amp;gt; li:first-child {&amp;#13;
+  margin-left: 0px;&amp;#13;
+}&amp;#13;
+&amp;#13;
+ul.aisa-article-info li {&amp;#13;
+  margin-right: 0px;&amp;#13;
+  margin-left: 0px;&amp;#13;
+  display: inline;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-article-info li::before {&amp;#13;
+  content: "\2022"&amp;#13;
+}&amp;#13;
+&amp;#13;
+ul.aisa-article-info &amp;gt; li:first-child::before {&amp;#13;
+  content: ""&amp;#13;
+}&amp;#13;
+&amp;#13;
+ul.aisa-article-info &amp;gt; li:first-child span.aisa-article-label {&amp;#13;
+  margin-left: 0px;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-article-label {&amp;#13;
+  margin-left: 0px;&amp;#13;
+  margin-right: 0px;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-article-value {&amp;#13;
+  margin-left: 0px;&amp;#13;
+  margin-right: 0px;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-rating-readonly {&amp;#13;
+  height: 18px;&amp;#13;
+  line-height: 18px;&amp;#13;
+  display: inline-block;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.b {&amp;#13;
+  border: 0px solid transparent&amp;#13;
+}&amp;#13;
+&amp;#13;
+div.aisa-result-title, div.aisa-meta-row {&amp;#13;
+  padding-bottom: 8px;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-button-bar {&amp;#13;
+  height: 45px;&amp;#13;
+  line-height: 45px;&amp;#13;
+  white-space: nowrap;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-button-bar button {&amp;#13;
+	vertical-align: middle;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-results-button-bar {&amp;#13;
+  height: 45px;&amp;#13;
+  line-height: 45px;&amp;#13;
+  text-align: center;&amp;#13;
+  margin-bottom: 10px;&amp;#13;
+}&amp;#13;
+&amp;#13;
+button.aisa-ua-detail {&amp;#13;
+  line-height: 14px;&amp;#13;
+  margin: 0px 8px 0px 0px;&amp;#13;
+}&amp;#13;
+&amp;#13;
+span.aisa-ua-detail-label {&amp;#13;
+  vertical-align: middle;&amp;#13;
+  font-size: 14px;&amp;#13;
+  text-decoration: underline;&amp;#13;
+}&amp;#13;
+&amp;#13;
+i:before {&amp;#13;
+  vertical-align: baseline;&amp;#13;
+}&amp;#13;
+&amp;#13;
+img.aisa-result-image, img.aisa-record-image {&amp;#13;
+  width: 100%;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.icon-star {&amp;#13;
+  color: gold;&amp;#13;
+  font-size: 10px;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.icon-star-empty {&amp;#13;
+  color: #343D47;&amp;#13;
+  font-size: 10px;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-results-panel &amp;gt; .panel-heading { display: none; }&amp;#13;
+&amp;#13;
+#ka-accordion .panel-heading { display: block; }&amp;#13;
+&amp;#13;
+.side-box {&amp;#13;
+  margin: 0 0;&amp;#13;
+  border: $gray-light 1px solid;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.side-box .box {&amp;#13;
+  padding: 5px;&amp;#13;
+  display: inline-block;&amp;#13;
+  width: 49%;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.side-box .box:nth-child(2) {&amp;#13;
+  border-left: $gray-light 1px solid;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.side-box .box .number-box {&amp;#13;
+  direction: ltr;&amp;#13;
+  padding-top: 2px;&amp;#13;
+  padding-bottom: 2px;&amp;#13;
+  font-size: 20px;&amp;#13;
+  text-align: center;&amp;#13;
+  color: $gray-base;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.side-box .box .text-box {&amp;#13;
+  font-size: 11px;&amp;#13;
+  color: $gray-light;&amp;#13;
+  text-align: center;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.btn-icon {&amp;#13;
+  background: none;&amp;#13;
+  padding: 3px;&amp;#13;
+  border: none;&amp;#13;
+  border-top-color: initial;&amp;#13;
+  border-top-style: none;&amp;#13;
+  border-top-width: initial;&amp;#13;
+  border-right-color: initial;&amp;#13;
+  border-right-style: none;&amp;#13;
+  border-right-width: initial;&amp;#13;
+  border-bottom-color: initial;&amp;#13;
+  border-bottom-style: none;&amp;#13;
+  border-bottom-width: initial;&amp;#13;
+  border-left-color: initial;&amp;#13;
+  border-left-style: none;&amp;#13;
+  border-left-width: initial;&amp;#13;
+  border-image-source: initial;&amp;#13;
+  border-image-slice: initial;&amp;#13;
+  border-image-width: initial;&amp;#13;
+  border-image-outset: initial;&amp;#13;
+  border-image-repeat: initial;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-preview-button {&amp;#13;
+  font-size: 20px;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-lozenge {&amp;#13;
+  color: $btn-primary-color;&amp;#13;
+  font-size: 11px;&amp;#13;
+  background-color: #3d89cb;&amp;#13;
+  padding: 2px 6px 2px 6px;&amp;#13;
+  margin-left: 10px;&amp;#13;
+  border-radius: 5px;&amp;#13;
+}&amp;#13;
+&amp;#13;
+.aisa-record-short-description {&amp;#13;
+  overflow-wrap: break-word;&amp;#13;
+  word-wrap: break-word; &amp;#13;
+}&amp;#13;
+&amp;#13;
+#sp_cxs_aisa_aria_status {&amp;#13;
+	font-size: 0 !important;&amp;#13;
+}&amp;#13;
+&amp;#13;
+@media screen and (max-width: 992px) {&amp;#13;
+  div.aisa-result-icon.col-md-1 {&amp;#13;
+    display: none;&amp;#13;
+  }&amp;#13;
+  .aisa-ua-wide {&amp;#13;
+    display: none;&amp;#13;
+  }&amp;#13;
+}&amp;#13;
+&amp;#13;
+@media screen and (min-width: 992px) {&amp;#13;
+  span.aisa-result-icon {&amp;#13;
+  	display: none;&amp;#13;
+  }&amp;#13;
+  .aisa-button-bar-narrow {&amp;#13;
+    display: none;&amp;#13;
+  }&amp;#13;
+}&amp;#13;
+&lt;/css&gt;&lt;data_table&gt;sp_instance&lt;/data_table&gt;&lt;demo_data/&gt;&lt;description/&gt;&lt;docs/&gt;&lt;field_list/&gt;&lt;has_preview&gt;false&lt;/has_preview&gt;&lt;id&gt;ai-search-assist&lt;/id&gt;&lt;internal&gt;false&lt;/internal&gt;&lt;link&gt;&lt;![CDATA[function link($scope, el, attrs, controller) {
+		/*
+			We can use angular expressions for the below funtionalities. But JAWS is reading angular expressions on live regions.
+			so we are manipulating directly DOM.
+		*/
+		var timerPromise;
+		$scope.ariaStatus = '';
+		var $timeout = $injector.get('$timeout');
+		function updateAriaStatus(msg) {
+			var target = $(el).find('#sp_cxs_aisa_aria_status')[0];
+			$scope.ariaStatus = msg; 
+			target.innerHTML = '&lt;div&gt;' +$('&lt;div&gt;', { text:msg }).html() + '&lt;/div&gt;';
+		}
+
+		$scope.setAriaStatus = function(msg, delay) {
+			delay = delay || 0;
+			if(delay == 0 || timerPromise)
+				$timeout.cancel(timerPromise);
+
+			(function(val) {
+				timerPromise = $timeout(function() {
+					timerPromise = undefined;
+					updateAriaStatus(val);
+				}, delay);
+			})(msg);
+		};
+
+		$scope.setAriaStatus(scope.c.data.ariaMsgs.noResultsToDisplay);
+	}
+]]&gt;&lt;/link&gt;&lt;name&gt;AI Search Assist&lt;/name&gt;&lt;option_schema/&gt;&lt;public&gt;false&lt;/public&gt;&lt;roles/&gt;&lt;script&gt;&lt;![CDATA[(function() {
+    if (!input) {
+		var rpUtils = new AISARecordProducerUtils();
+		var actionUtils = new AISAActionUtils();
+		var rpSysId = options.cat_item || $sp.getParameter("sys_id");
+		var aisaEnabled = rpUtils.useAISARecordProducerConfig(rpSysId);
+		var portalPage = $sp.getPortalRecord();
+		var user = new GlideRecord('sys_user');
+		user.get(gs.getUserID());
+
+		var aisPortalEnabled = portalPage &amp;&amp; !!portalPage.enable_ais;
+		var isMesp = rpUtils.isMesp(portalPage.getUniqueValue());
+		if (isMesp)
+			aisPortalEnabled = portalPage &amp;&amp; (rpUtils.getNowMobileSearchEngine() == 'ai_search');
+		
+		data.useAISA = aisaEnabled &amp;&amp; aisPortalEnabled;
+		data.rpSysId = rpSysId;
+		data.isLocationTrackerDisabled = (gs.getProperty('glide.service_portal.disable_location_tracker') == "true") || false;
+		data.session = {
+			userId: gs.getUserID(),
+			language: gs.getSession().getLanguage(),
+			domain: (GlidePluginManager.isActive('com.glide.domain') &amp;&amp; user.isValidRecord() ? user.getDisplayValue('company') : '')
+		};
+
+		data.rpConfig = rpUtils.getRPConfigByRPId(rpSysId);
+
+		if (!GlidePluginManager.isActive('com.glide.domain'))
+			data.aisaProperties = {
+				wait_time: parseInt(gs.getProperty('com.snc.ai_search_assist.wait_time', 500)),
+				min_length: parseInt(gs.getProperty('com.snc.ai_search_assist.min_length', 3))
+			};
+		else
+			data.aisaProperties = {
+				wait_time: parseInt(GlideApplicationProperty.getValue('com.snc.ai_search_assist.wait_time')),
+				min_length: parseInt(GlideApplicationProperty.getValue('com.snc.ai_search_assist.min_length'))
+			};
+		
+		data.kbProperties = {
+			show_author: (gs.getProperty("glide.knowman.search.show_author", false) == "true") || false,
+			show_article_number: (gs.getProperty("glide.knowman.search.show_article_number", false) == "true") || false,
+			show_category: (gs.getProperty("glide.knowman.search.show_category", false) == "true") || false,
+			show_relevance: (gs.getProperty("glide.knowman.search.show_relevancy", false) == "true") || false,
+			show_last_modified: (gs.getProperty("glide.knowman.search.show_last_modified", false) =="true") || false,
+			show_published: (gs.getProperty("glide.knowman.search.show_published", false) == "true") || false,
+			show_unpublished: (gs.getProperty("glide.knowman.show_unpublished", false) == "true") || false,
+			show_view_count: (gs.getProperty("glide.knowman.search.show_view_count", false) == "true") || false,
+			show_rating: (gs.getProperty("glide.knowman.search.show_rating", false) == "true") || false
+		};
+		data.ariaMsgs = {
+			searchCompleted: gs.getMessage("Showing {0} search results based on field {1}"),
+			searching: gs.getMessage("Searching for {0}"),
+			loadingMoreResults: gs.getMessage("Loading more results"),
+			resultsLoaded: gs.getMessage("More results loaded"),
+			allResultsLoaded: gs.getMessage("Showing all {0} search results"),
+			noMatchingResults: gs.getMessage("No matching results found for {0}"),
+			noResultsToDisplay: gs.getMessage("No results to display")
+		};
+		data.i18nMsgs = {
+			'KB_VIEW': gs.getMessage("{0} view"),
+			'KB_VIEWS': gs.getMessage("{0} views"),
+			'RATING': gs.getMessage("{0} star rating"),
+			'NO_RATING': gs.getMessage("No rating"),
+			'CLICK_HERE': gs.getMessage("Click here to view this result. This result will open in a new window.")
+		};
+	}
+	if(input) {
+		if(input.action == "get_article_content"){
+			data.knowledge_content =  new KBViewModel().getArticleContentBySysId(input.articleId);
+		}
+
+		if(input.action == "register_kb_view" &amp;&amp; input.articleId){
+			var kb = new GlideRecordSecure("kb_knowledge");
+			if (kb.get(input.articleId)) {
+				data.viewCount = parseInt(kb.getValue('sys_view_count')) + 1;
+
+				var paramObj = {};
+				paramObj["glideSessionId"] = gs.getSessionID();
+				paramObj["displayVal"] = kb.getDisplayValue();
+				paramObj["domainId"] = gs.getSession().getCurrentDomainID();
+				if(input.tsQueryId)
+					paramObj["ts_query_id"] = input.tsQueryId;
+
+				new KBViewModel().increaseKBView(kb);
+				gs.eventQueue('kb.view', kb, JSON.stringify(paramObj), gs.getUserID());
+			}
+		}
+	}
+})();]]&gt;&lt;/script&gt;&lt;servicenow&gt;false&lt;/servicenow&gt;&lt;sys_class_name&gt;sp_widget&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2020-08-01 22:37:36&lt;/sys_created_on&gt;&lt;sys_id&gt;66135172671e1010b3d782f45685ef9e&lt;/sys_id&gt;&lt;sys_mod_count&gt;397&lt;/sys_mod_count&gt;&lt;sys_name&gt;AI Search Assist&lt;/sys_name&gt;&lt;sys_package display_value="AI Search Assist" source="com.snc.ai_search_assist"&gt;45ae0cbbe1b622108bb2327e62588619&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Global"&gt;global&lt;/sys_scope&gt;&lt;sys_update_name&gt;sp_widget_66135172671e1010b3d782f45685ef9e&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2025-05-28 16:31:49&lt;/sys_updated_on&gt;&lt;template&gt;&lt;![CDATA[&lt;sp-panel class="aisa-results-panel" ng-show="c.data.useAISA &amp;&amp; resultsPageIndex &gt;= 0"&gt;
+	&lt;div class="aisa-results-title-bar" ng-if="ALLOW_EXPAND_COLLAPSE" ng-click="toggleContainer()"&gt;
+		&lt;span class="aisa-results-title"&gt;
+			{{HEADER_TEXT}} &amp;nbsp;
+			&lt;i ng-class="['aisa-ec-chevron','fa',{'fa-chevron-down': isContainerCollapsed, 'fa-chevron-up': !isContainerCollapsed}]" ng-if="ALLOW_EXPAND_COLLAPSE"&gt;&lt;/i&gt;
+		&lt;/span&gt;
+	&lt;/div&gt;
+  &lt;div class="aisa-results-title-bar" ng-if="!ALLOW_EXPAND_COLLAPSE"&gt;
+		&lt;span class="aisa-results-title"&gt;
+			{{HEADER_TEXT}}
+		&lt;/span&gt;
+	&lt;/div&gt;
+  &lt;!-- Display Search Result List --&gt;
+  &lt;div class="aisa-results" ng-if="!isContainerCollapsed &amp;&amp; detailResultIndex &lt; 0"&gt;
+		&lt;div ng-if="checkResultType(result)" ng-repeat="result in searchAPIResponse.searchResults | limitTo:getResultsLimit()" class="m-b"&gt;
+      &lt;ng-include src="getResultTemplate(result)" /&gt;
+		&lt;/div&gt;
+    &lt;div class="row aisa-results-button-bar col-md-12" ng-if="hasMoreResults()"&gt;
+      &lt;button class="btn btn-default" ng-click="getMoreResults()" aria-label="${Shows more search results}"&gt;${Show more}&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;!-- Display message if no Search Results returned --&gt;
+    &lt;div ng-if="!searchAPIResponse.searchResults || searchAPIResponse.searchResults.length === 0"&gt;
+      ${No matching results found for {{searchAPIResponse.term}}}
+    &lt;/div&gt;
+	&lt;/div&gt;
+  &lt;!-- Display Search Result Detail --&gt;
+  &lt;div ng-if="!isContainerCollapsed &amp;&amp; detailResultIndex &gt;= 0"&gt;
+    &lt;div&gt;&lt;ng-include src="'aisa-detail-header'" /&gt;&lt;/div&gt;
+    &lt;div class="row col-md-12"&gt;
+  		&lt;ng-include src="getDetailTemplate()" /&gt;
+   	&lt;/div&gt;
+	&lt;/div&gt;
+&lt;/sp-panel&gt;
+&lt;!-- Start - Accessibility specific DOM --&gt;
+&lt;div id="sp_cxs_aisa_aria_status" aria-live="assertive" aria-atomic = "true"&gt;
+&lt;/div&gt;
+&lt;!--End - Accessibility specific DOM --&gt;]]&gt;&lt;/template&gt;&lt;/sp_widget&gt;</payload>
+        <sys_class_name>sp_rel_widget_clone</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-11-03 03:46:01</sys_created_on>
+        <sys_id>67ac74acc341b2109f0231cc0501313f</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>27ac78a0c341b2109f0231cc05013126</sys_name>
+        <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Loaner Vehicle Application">a2b8a412c31072109f0231cc050131b7</sys_scope>
+        <sys_update_name>sp_rel_widget_clone_67ac74acc341b2109f0231cc0501313f</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-11-03 03:46:01</sys_updated_on>
+    </sp_rel_widget_clone>
+</record_update>

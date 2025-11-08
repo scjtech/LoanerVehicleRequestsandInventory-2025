@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script/>
+        <controller_as>c</controller_as>
+        <css>.at-banner{&#13;
+  position: relative;&#13;
+  width: 100%;&#13;
+  overflow: hidden;&#13;
+  border-radius: 12px;      /* adjust if you like */&#13;
+}&#13;
+.at-banner__img{&#13;
+  position: absolute;&#13;
+  inset: 0;&#13;
+  width: 100%;&#13;
+  height: 100%;&#13;
+  object-fit: cover;         /* fills without distortion */&#13;
+  object-position: center;   /* centers the truck */&#13;
+  display: block;&#13;
+}&#13;
+</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>true</has_preview>
+        <id>at_banner</id>
+        <internal>false</internal>
+        <link><![CDATA[function link(scope, element, attrs, controller) {
+  
+}]]></link>
+        <name>AT_Banner</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script/>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-11-08 06:58:42</sys_created_on>
+        <sys_id>0e44d7cac3c972109f0231cc050131c3</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>AT_Banner</sys_name>
+        <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Loaner Vehicle Application">a2b8a412c31072109f0231cc050131b7</sys_scope>
+        <sys_update_name>sp_widget_0e44d7cac3c972109f0231cc050131c3</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-11-08 07:29:25</sys_updated_on>
+        <template><![CDATA[<div class="at-banner" ng-style="{'height': (options.height || 300) + 'px'}">
+  <img
+    class="at-banner__img"
+    ng-src="/sys_attachment.do?sys_id={{::options.image_sys_id}}"
+    alt="AutoTrack banner">
+</div>
+]]></template>
+    </sp_widget>
+</record_update>
