@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_action_view">
+    <sys_ui_action_view action="INSERT_OR_UPDATE">
+        <sys_class_name>sys_ui_action_view</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-12-28 07:55:44</sys_created_on>
+        <sys_id>8645411ac34ab2109f0231cc0501318d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Tracker Managers Claim Button.Portal</sys_name>
+        <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Loaner Vehicle Application">a2b8a412c31072109f0231cc050131b7</sys_scope>
+        <sys_ui_action display_value="Tracker Managers Claim Button">8cc0e734c34232109f0231cc050131c2</sys_ui_action>
+        <sys_ui_view display_value="Portal" name="portal">6293c073e13222108bb2327e625886ef</sys_ui_view>
+        <sys_update_name>sys_ui_action_view_8645411ac34ab2109f0231cc0501318d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-12-28 07:55:44</sys_updated_on>
+        <visibility>include</visibility>
+    </sys_ui_action_view>
+</record_update>
