@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="par_dashboard_visibility">
+    <par_dashboard_visibility action="INSERT_OR_UPDATE">
+        <dashboard display_value="LVA Dashboard - Managers">04efb64cc31232109f0231cc05013141</dashboard>
+        <experience display_value="Service Operations Workspace Admin Center">67ae740c773a2110583f78dabd5a998d</experience>
+        <sys_class_name>par_dashboard_visibility</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-01-03 06:26:18</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>ea5a6f84c31632109f0231cc050131de</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_overrides/>
+        <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Loaner Vehicle Application">a2b8a412c31072109f0231cc050131b7</sys_scope>
+        <sys_update_name>par_dashboard_visibility_ea5a6f84c31632109f0231cc050131de</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-01-03 06:26:18</sys_updated_on>
+    </par_dashboard_visibility>
+</record_update>

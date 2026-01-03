@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_instance_link">
-    <sp_instance_link action="INSERT_OR_UPDATE">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_instance_table">
+    <sp_instance_table action="INSERT_OR_UPDATE">
         <active>true</active>
         <advanced_placeholder_dimensions>false</advanced_placeholder_dimensions>
         <async_load>false</async_load>
@@ -8,12 +8,18 @@
         <class_name/>
         <color>default</color>
         <css/>
-        <glyph>child</glyph>
+        <display_field/>
+        <field_list>number,vehicle_status,assigned_to,expected_return_date,actual_return_date,reschedule_status</field_list>
+        <filter table="x_746154_loaner_0_vehicle_tracker">expected_return_date&lt;javascript:gs.endOfToday()^actual_return_dateISEMPTY^tracker_status=Open<item endquery="false" field="expected_return_date" goto="false" newquery="false" operator="&lt;" or="false" value="javascript:gs.endOfToday()"/>
+            <item endquery="false" field="actual_return_date" goto="false" newquery="false" operator="ISEMPTY" or="false" value=""/>
+            <item display_value="Open" endquery="false" field="tracker_status" goto="false" newquery="false" operator="=" or="false" value="Open"/>
+        </filter>
+        <glyph/>
         <id/>
-        <kb_article/>
-        <kb_category/>
-        <kb_topic/>
-        <order>2</order>
+        <maximum_entries>5</maximum_entries>
+        <order>1</order>
+        <order_by>expected_return_date</order_by>
+        <order_direction>asc</order_direction>
         <placeholder_dimensions>{&#13;	"mobile": {&#13;		"height": "250px",&#13;		"width": "100%"&#13;	},&#13;	"desktop": {&#13;		"height": "250px",&#13;		"width": "100%"&#13;	},&#13;	"tablet": {&#13;		"height": "250px",&#13;		"width": "100%"&#13;	}&#13;}</placeholder_dimensions>
         <placeholder_dimensions_script><![CDATA[function evaluateConfig(options) { return {	"mobile": {		"height": "250px",		"width": "100%"	},	"desktop": {		"height": "250px",		"width": "100%"	},	"tablet": {		"height": "250px",		"width": "100%"	}}; }]]></placeholder_dimensions_script>
         <placeholder_template>&lt;!-- 
@@ -33,34 +39,27 @@
 &lt;/div&gt;</placeholder_template>
         <preserve_placeholder_size>false</preserve_placeholder_size>
         <roles/>
-        <sc_cat_item/>
-        <sc_category display_value="Can We Help You?">e15706fc0a0a0aa7007fc21e1ab70c2f</sc_category>
-        <short_description>Contact support to make a request, or report a problem</short_description>
+        <short_description/>
         <size>md</size>
-        <sp_column display_value="2">7e4ddd28c305b2109f0231cc050131dd</sp_column>
-        <sp_page display_value="sc_category">07261a2147132100ba13a5554ee49092</sp_page>
-        <sp_widget display_value="Icon Link">3caa67afcb13020000f8d856634c9c2e</sp_widget>
-        <sys_class_name>sp_instance_link</sys_class_name>
+        <sp_column display_value="1">26b0e688c35ef2109f0231cc05013147</sp_column>
+        <sp_page display_value="form">ed5f8ec347730200ba13a5554ee49046</sp_page>
+        <sp_widget display_value="Data Table from Instance Definition">38058ff1cb11020000f8d856634c9c8c</sp_widget>
+        <sys_class_name>sp_instance_table</sys_class_name>
         <sys_created_by>admin</sys_created_by>
-        <sys_created_on>2025-11-02 20:45:54</sys_created_on>
-        <sys_id>ed8c1b14c38972109f0231cc05013133</sys_id>
-        <sys_mod_count>9</sys_mod_count>
-        <sys_name>Get Help</sys_name>
+        <sys_created_on>2026-01-03 01:04:38</sys_created_on>
+        <sys_id>e2b02a88c35ef2109f0231cc050131cb</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>Overdue Vehicles</sys_name>
         <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
         <sys_policy/>
         <sys_scope display_value="Loaner Vehicle Application">a2b8a412c31072109f0231cc050131b7</sys_scope>
-        <sys_update_name>sp_instance_link_ed8c1b14c38972109f0231cc05013133</sys_update_name>
+        <sys_update_name>sp_instance_table_e2b02a88c35ef2109f0231cc050131cb</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2026-01-03 00:59:10</sys_updated_on>
-        <title>Get Help</title>
-        <type>sc_category</type>
+        <sys_updated_on>2026-01-03 02:13:02</sys_updated_on>
+        <table>x_746154_loaner_0_vehicle_tracker</table>
+        <title>Overdue Vehicles</title>
         <url/>
-        <widget_parameters><![CDATA[{
-	"link_template": {
-		"value": "Circle Icon",
-		"displayValue": "Circle Icon"
-	}
-}]]></widget_parameters>
-    </sp_instance_link>
-    <sys_translated_text action="delete_multiple" query="documentkey=ed8c1b14c38972109f0231cc05013133"/>
+        <widget_parameters/>
+    </sp_instance_table>
+    <sys_translated_text action="delete_multiple" query="documentkey=e2b02a88c35ef2109f0231cc050131cb"/>
 </record_update>

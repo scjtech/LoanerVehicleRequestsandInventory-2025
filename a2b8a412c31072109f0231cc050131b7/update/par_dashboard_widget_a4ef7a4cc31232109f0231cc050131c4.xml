@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="par_dashboard_widget">
+    <par_dashboard_widget action="INSERT_OR_UPDATE">
+        <canvas display_value="">10ef7a4cc31232109f0231cc0501314c</canvas>
+        <component display_value="Donut">a2b0596cec6b9d49dd1ff9bf76b5084b</component>
+        <component_props>{"drilldownLabel":false,"selectedElements":[],"configVersion":"23.0.0-ci-SNAPSHOT","showDataLabels":false,"dataLabelsType":"both","truncationType":"end","showRegister":true,"registerPosition":"right","registerOrientation":"horizontal","showRegisterOnSameLine":true,"showRegisterValue":true,"legendHorizontalAlignment":"center","legendExpandToFit":false,"showRegisterPercentage":false,"colorConfig":{"type":"default"},"newReporting":false,"additionalGroupByConfig":[],"dataSources":[{"isDatabaseView":false,"allowRealTime":true,"label":"Loaner Vehicle Catalog","sourceType":"table","tableOrViewName":"x_746154_loaner_0_loaner_vehicle_catalog","filterQuery":"","preferredVisualizations":["d24d53f60350de7a652caf3188a46ed2"],"id":"dGFibGV4Xzc0NjE1NF9sb2FuZXJfMF9sb2FuZXJfdmVoaWNsZV9jYXRhbG9nMTc2NzQxOTQ3MDQ0MQ==","dataCategories":["trend","group","simple"]}],"showHeader":true,"showTotalAggregate":false,"showSubAggregate":false,"showFirstGroupAggregate":false,"showSecondGroupAggregate":false,"hideMatrixAggregate":false,"wrapTitle":false,"showHeaderSeparator":false,"contextMenuActions":[],"headerTitle":"Vehicle Models in Inventory","headingLevel":2,"showBorder":true,"bareBorder":false,"telemetry":null,"showDataPassthrough":false,"showAdditionalGroupBySelector":false,"metrics":[{"dataSource":"dGFibGV4Xzc0NjE1NF9sb2FuZXJfMF9sb2FuZXJfdmVoaWNsZV9jYXRhbG9nMTc2NzQxOTQ3MDQ0MQ==","id":"ZEdGaWJHVjRYemMwTmpFMU5GOXNiMkZ1WlhKZk1GOXNiMkZ1WlhKZmRtVm9hV05zWlY5allYUmhiRzluTVRjMk56UXhPVFEzTURRME1RPT0xNzY3NDE5NDcxOTcw","aggregateFunction":"COUNT","numberFormat":{"customFormat":false},"axisId":"primary"}],"groupBy":[{"groupBy":[{"dataSource":"dGFibGV4Xzc0NjE1NF9sb2FuZXJfMF9sb2FuZXJfdmVoaWNsZV9jYXRhbG9nMTc2NzQxOTQ3MDQ0MQ==","groupByField":"vehicle_model","isRange":false,"isChoice":false,"isPaBucket":false}],"maxNumberOfGroups":"ALL","numberOfGroupsBasedOn":"NO_OF_GROUP_BASED_ON_PER_METRIC","showOthers":false,"disableRanges":false}],"sortBy":"name","sortByOrder":"asc","trendBy":null,"showChange":false,"showChangePercentage":false,"showTarget":false,"showForecast":false,"showForecastRange":false,"showTrend":false,"showConfidenceBand":false,"showGapPercentage":false,"showSparkline":false,"showMetricLabel":false,"showThreshold":false,"showComment":false,"showTotalValue":true,"followFilters":true,"showFilterIcon":true,"enableRealTimeUpdate":false,"enableDrilldown":true,"enableClickAndStay":false,"showDataTable":false,"enableCustomEmptyState":false,"componentId":"8gkesdrk","emptyStateIllustration":"no-data","emptyStateHeading":"No data available.","emptyStateContent":"There are no scores available for the selected criteria. Contact your admin for more info.","emptyStateAlignment":"vertical-centered","refreshFrequency":null,"hideDevSettings":false,"configPropModifiers":{},"showMaximumRange":false,"allowChangeDateRange":false,"showDateRangeByDefault":false,"applyDateRange":false,"numberOfPeriods":3,"showAbsolutePeriod":false,"scoreType":null,"showChangeFrom":"previous","period":"M","useDataCache":false,"cacheExpirationTime":0,"showCacheTime":true,"dateFormat":"default","showRefresh":true,"id":"headerTitle","value":"Assignment status","noDebounce":true,"propLabel":"Chart title","chartInteractionEnabled":true,"filterPerMetric":[],"allowAdditionalGroupByPerMetric":false,"headerColor":{"themeVariable":"--now-color_alert--positive-3","value":"#266108"},"titleColor":{"themeVariable":"--now-color_text--primary-actionable","value":"#ffffff"}}</component_props>
+        <h>19</h>
+        <name>Assignment status donut</name>
+        <stored_component/>
+        <sys_class_name>par_dashboard_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-01-03 03:20:46</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>a4ef7a4cc31232109f0231cc050131c4</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>Assignment status donut</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Loaner Vehicle Application">a2b8a412c31072109f0231cc050131b7</sys_scope>
+        <sys_update_name>par_dashboard_widget_a4ef7a4cc31232109f0231cc050131c4</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-01-03 06:06:14</sys_updated_on>
+        <visualization/>
+        <w>24</w>
+        <widget_props/>
+        <x>24</x>
+        <y>14</y>
+    </par_dashboard_widget>
+</record_update>

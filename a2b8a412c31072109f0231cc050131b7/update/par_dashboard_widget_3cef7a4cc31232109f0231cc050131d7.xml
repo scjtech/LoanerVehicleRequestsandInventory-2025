@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="par_dashboard_widget">
+    <par_dashboard_widget action="INSERT_OR_UPDATE">
+        <canvas display_value="">10ef7a4cc31232109f0231cc0501314c</canvas>
+        <component display_value="Single score">d24d53f60350de7a652caf3188a46ed2</component>
+        <component_props>{"configVersion":"23.0.0-ci-SNAPSHOT","scoreSize":"auto","headingPosition":"top","sparklineStyle":"area","scoreIcon":"vehicle-truck-fill","iconStyle":"background","showScoreDate":false,"useRelativeScoreTime":false,"showScoreUpdateTime":false,"showZero":true,"colorConfig":{"type":"singleColor","values":[{"color":"842431cdd7500200b96d45a3ce610331","iconColor":"20a1ce0477903300fde1bfc268106136","metric":"ZEdGaWJHVjRYemMwTmpFMU5GOXNiMkZ1WlhKZk1GOXNiMkZ1WlhKZmRtVm9hV05zWlY5allYUmhiRzluTVRjMk56UXhNek13T1Rrek1nPT0xNzY3NDEzMzExNTIw","rules":[]}]},"newReporting":false,"additionalGroupByConfig":[],"dataSources":[{"isDatabaseView":false,"allowRealTime":true,"label":"Loaner Vehicle Catalog","sourceType":"table","tableOrViewName":"x_746154_loaner_0_loaner_vehicle_catalog","filterQuery":"status=available","preferredVisualizations":["d24d53f60350de7a652caf3188a46ed2"],"id":"dGFibGV4Xzc0NjE1NF9sb2FuZXJfMF9sb2FuZXJfdmVoaWNsZV9jYXRhbG9nMTc2NzQxMzMwOTkzMg==","dataCategories":["trend","group","simple"]}],"showHeader":true,"showTotalAggregate":false,"showSubAggregate":false,"showFirstGroupAggregate":false,"showSecondGroupAggregate":false,"hideMatrixAggregate":false,"wrapTitle":true,"showHeaderSeparator":false,"contextMenuActions":[],"headerTitle":"Amount of Available Vehicles","headingLevel":2,"showBorder":true,"bareBorder":false,"telemetry":null,"showDataPassthrough":false,"showAdditionalGroupBySelector":false,"metrics":[{"dataSource":"dGFibGV4Xzc0NjE1NF9sb2FuZXJfMF9sb2FuZXJfdmVoaWNsZV9jYXRhbG9nMTc2NzQxMzMwOTkzMg==","id":"ZEdGaWJHVjRYemMwTmpFMU5GOXNiMkZ1WlhKZk1GOXNiMkZ1WlhKZmRtVm9hV05zWlY5allYUmhiRzluTVRjMk56UXhNek13T1Rrek1nPT0xNzY3NDEzMzExNTIw","aggregateFunction":"COUNT","numberFormat":{"customFormat":false},"axisId":"primary"}],"groupBy":null,"sortByOrder":"desc","trendBy":null,"showChange":false,"showChangePercentage":false,"showTarget":false,"showForecast":false,"showForecastRange":false,"showTrend":false,"showConfidenceBand":false,"showGapPercentage":false,"showSparkline":false,"showMetricLabel":false,"showThreshold":false,"showComment":false,"followFilters":true,"showFilterIcon":true,"enableRealTimeUpdate":true,"enableDrilldown":true,"enableClickAndStay":false,"showDataTable":false,"enableCustomEmptyState":false,"componentId":"66douqcl","emptyStateIllustration":"no-data","emptyStateHeading":"No data available.","emptyStateContent":"There are no scores available for the selected criteria. Contact your admin for more info.","emptyStateAlignment":"vertical-centered","refreshFrequency":null,"hideDevSettings":false,"configPropModifiers":{},"filterConfigurations":"@state.parFilters","showMaximumRange":false,"allowChangeDateRange":false,"showDateRangeByDefault":false,"applyDateRange":false,"numberOfPeriods":3,"showAbsolutePeriod":false,"scoreType":null,"showChangeFrom":false,"period":"M","useDataCache":false,"cacheExpirationTime":0,"showCacheTime":true,"dateFormat":"default","showRefresh":true,"id":"colorConfig","value":{"type":"singleColor","values":[{"color":"65b30218a9fe3dba0120df8611520d97","iconColor":"28de19d8b7733010b288bc16de11a9ac","metric":"ZEdGaWJHVnpibDl3Ykc1blgyRjBkRjlqYjNKbFgyRjBkSEpwWW5WMFpWOWlZWE5sWkY5eVpYTnZkWEpqWlY5aFoyZHlaV2RoZEdWek1UY3pPVGsyTURjek1EWTJPUT09MTczOTk2MDczMTQ2Mw==","rules":[]}]},"noDebounce":true,"propLabel":"Colors","showLoadingIndicator":false,"sharedContext":{"colorDetails":{"65b30218a9fe3dba0120df8611520d97":[{"sysId":"65b30218a9fe3dba0120df8611520d97","defaultColor":"0,0,0","cssCustomProperty":"--now-color_text--primary"}],"23527d8dd7500200b96d45a3ce610394":[{"sysId":"23527d8dd7500200b96d45a3ce610394","defaultColor":"199,233,192","cssCustomProperty":""}],"28de19d8b7733010b288bc16de11a9ac":[{"sysId":"28de19d8b7733010b288bc16de11a9ac","defaultColor":"221,133,129","cssCustomProperty":"--now-card_sidebar--secondary_critical--background-color"}],"cb086372795b0510f87732c4f7a02570":[{"sysId":"cb086372795b0510f87732c4f7a02570","defaultColor":"189,220,242","cssCustomProperty":""}]},"datasourceConfigurations":{"table":{"timeZone":"SESSION","useSeriesLabels":false},"indicator":{"timeZone":"SESSION","maxSupportedAdditionalGroupBy":1,"useSeriesLabels":false}}},"filterPerMetric":[],"sortBy":"value","rangesConfig":{},"backgroundRefreshInterval":5,"headerColor":{"themeVariable":"--now-color_alert--positive-3","value":"#266108"},"titleColor":{"themeVariable":"--now-color_text--primary-actionable","value":"#ffffff"}}</component_props>
+        <h>12</h>
+        <name/>
+        <stored_component/>
+        <sys_class_name>par_dashboard_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-01-03 03:20:46</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>3cef7a4cc31232109f0231cc050131d7</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name/>
+        <sys_overrides/>
+        <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Loaner Vehicle Application">a2b8a412c31072109f0231cc050131b7</sys_scope>
+        <sys_update_name>par_dashboard_widget_3cef7a4cc31232109f0231cc050131d7</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-01-03 06:05:48</sys_updated_on>
+        <visualization/>
+        <w>12</w>
+        <widget_props/>
+        <x>0</x>
+        <y>33</y>
+    </par_dashboard_widget>
+</record_update>

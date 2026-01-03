@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[api.controller = function () {
+  var c = this;
+  c.tab = "expected";
+};
+
+]]></client_script>
+        <controller_as>c</controller_as>
+        <css>.calendar-tabs .nav-tabs {&#13;
+  margin-bottom: 10px;&#13;
+}&#13;
+</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>lva_calendar_tabs</id>
+        <internal>false</internal>
+        <link><![CDATA[function link(scope, element, attrs, controller) {
+  
+}]]></link>
+        <name>LVA Calendar Tabs</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+  // Replace REPORT_WIDGET_SYS_ID with the sys_id of the *Service Portal Report widget*
+  var REPORT_WIDGET_SYS_ID = "PUT_REPORT_WIDGET_SYS_ID_HERE";
+
+  data.expected = $sp.getWidget(REPORT_WIDGET_SYS_ID, {
+    report_id: "bf8a697fc306b2109f0231cc05013106"
+  });
+
+  data.actual = $sp.getWidget(REPORT_WIDGET_SYS_ID, {
+    report_id: "55397533c386b2109f0231cc050131b5"
+  });
+})();
+]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-01-02 07:31:38</sys_created_on>
+        <sys_id>fc212a37c34ab2109f0231cc0501315a</sys_id>
+        <sys_mod_count>5</sys_mod_count>
+        <sys_name>LVA Calendar Tabs</sys_name>
+        <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Loaner Vehicle Application">a2b8a412c31072109f0231cc050131b7</sys_scope>
+        <sys_update_name>sp_widget_fc212a37c34ab2109f0231cc0501315a</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-01-02 09:11:41</sys_updated_on>
+        <template><![CDATA[<ul class="nav nav-tabs">
+  <li ng-class="{active: c.tab === 'expected'}">
+    <a href="" ng-click="c.tab='expected'">Expected Returns</a>
+  </li>
+  <li ng-class="{active: c.tab === 'actual'}">
+    <a href="" ng-click="c.tab='actual'">Actual Returns</a>
+  </li>
+</ul>
+
+<div class="tab-content" style="margin-top:12px;">
+  <div class="tab-pane" ng-class="{active: c.tab === 'expected'}" ng-if="c.tab==='expected'">
+    <sp-widget widget="data.expected"></sp-widget>
+  </div>
+
+  <div class="tab-pane" ng-class="{active: c.tab === 'actual'}" ng-if="c.tab==='actual'">
+    <sp-widget widget="data.actual"></sp-widget>
+  </div>
+</div>
+
+
+]]></template>
+    </sp_widget>
+</record_update>

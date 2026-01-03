@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_rectangle_menu_item">
+    <sp_rectangle_menu_item action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <color>default</color>
+        <condition>gs.getUser().isMemberOf('d1102f2bc3a832109f0231cc050131f7')</condition>
+        <display_1/>
+        <display_2/>
+        <display_date/>
+        <filter/>
+        <glyph>calendar-times-o</glyph>
+        <hint/>
+        <kb_article/>
+        <kb_category/>
+        <kb_topic/>
+        <label>Overdue Vehicles</label>
+        <order>100</order>
+        <record_script/>
+        <sc_cat_item/>
+        <sc_category/>
+        <short_description/>
+        <sp_page display_value="overdue_calendar">22b0e688c35ef2109f0231cc0501313f</sp_page>
+        <sp_rectangle_menu display_value="AutoTrack Employee Center Menu">2641957fc3e972109f0231cc050131ea</sp_rectangle_menu>
+        <sp_rectangle_menu_item/>
+        <sys_class_name>sp_rectangle_menu_item</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-01-03 01:13:53</sys_created_on>
+        <sys_id>a7a2a288c35ef2109f0231cc05013179</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>Overdue Vehicles</sys_name>
+        <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Loaner Vehicle Application">a2b8a412c31072109f0231cc050131b7</sys_scope>
+        <sys_update_name>sp_rectangle_menu_item_a7a2a288c35ef2109f0231cc05013179</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-01-03 01:53:46</sys_updated_on>
+        <table/>
+        <type>page</type>
+        <url>https://dev268961.service-now.com/sys_report_display.do?sysparm_report_id=af1406bfc386b2109f0231cc050131c0</url>
+        <url_target/>
+    </sp_rectangle_menu_item>
+    <sys_translated_text action="delete_multiple" query="documentkey=a7a2a288c35ef2109f0231cc05013179"/>
+</record_update>
