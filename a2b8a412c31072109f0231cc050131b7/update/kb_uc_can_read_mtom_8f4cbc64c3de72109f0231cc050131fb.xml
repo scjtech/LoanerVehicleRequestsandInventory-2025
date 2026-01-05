@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="kb_uc_can_read_mtom">
+    <kb_uc_can_read_mtom action="INSERT_OR_UPDATE">
+        <kb_knowledge_base display_value="AutoTrack - Employee and Managers">1757b0ecc39e72109f0231cc05013158</kb_knowledge_base>
+        <sys_class_name>kb_uc_can_read_mtom</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-01-04 07:02:49</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>8f4cbc64c3de72109f0231cc050131fb</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>AutoTrack - Employee and Managers.Any user for KB</sys_name>
+        <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Loaner Vehicle Application">a2b8a412c31072109f0231cc050131b7</sys_scope>
+        <sys_update_name>kb_uc_can_read_mtom_8f4cbc64c3de72109f0231cc050131fb</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-01-04 07:02:49</sys_updated_on>
+        <user_criteria display_value="Any user for KB">0f8d9007b58b8110f8779c9460b51456</user_criteria>
+    </kb_uc_can_read_mtom>
+</record_update>

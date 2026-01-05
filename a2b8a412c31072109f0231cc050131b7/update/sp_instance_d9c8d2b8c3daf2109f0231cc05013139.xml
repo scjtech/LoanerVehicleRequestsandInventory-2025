@@ -10,7 +10,7 @@
         <css/>
         <glyph/>
         <id/>
-        <order>3</order>
+        <order>1</order>
         <placeholder_dimensions>{&#13;	"mobile": {&#13;		"height": "250px",&#13;		"width": "100%"&#13;	},&#13;	"desktop": {&#13;		"height": "250px",&#13;		"width": "100%"&#13;	},&#13;	"tablet": {&#13;		"height": "250px",&#13;		"width": "100%"&#13;	}&#13;}</placeholder_dimensions>
         <placeholder_dimensions_script><![CDATA[function evaluateConfig(options) { return {	"mobile": {		"height": "250px",		"width": "100%"	},	"desktop": {		"height": "250px",		"width": "100%"	},	"tablet": {		"height": "250px",		"width": "100%"	}}; }]]></placeholder_dimensions_script>
         <placeholder_template>&lt;!-- 
@@ -32,60 +32,48 @@
         <roles/>
         <short_description/>
         <size>md</size>
-        <sp_column display_value="1">b0f5fc3bc36972109f0231cc050131d2</sp_column>
-        <sp_widget display_value="Relevant for you">6cc836d0dbf700500c209493db961914</sp_widget>
+        <sp_column display_value="2">ea489e78c3daf2109f0231cc050131b5</sp_column>
+        <sp_widget display_value="Knowledge Bases Browse">abe00f1bdb50320099f93691f0b8f57b</sp_widget>
         <sys_class_name>sp_instance</sys_class_name>
         <sys_created_by>admin</sys_created_by>
-        <sys_created_on>2025-12-08 02:08:15</sys_created_on>
-        <sys_id>30f5fc3bc36972109f0231cc050131da</sys_id>
-        <sys_mod_count>0</sys_mod_count>
-        <sys_name/>
+        <sys_created_on>2026-01-05 08:25:18</sys_created_on>
+        <sys_id>d9c8d2b8c3daf2109f0231cc05013139</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>Browse KB Articles</sys_name>
         <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
         <sys_policy/>
         <sys_scope display_value="Loaner Vehicle Application">a2b8a412c31072109f0231cc050131b7</sys_scope>
-        <sys_update_name>sp_instance_30f5fc3bc36972109f0231cc050131da</sys_update_name>
+        <sys_update_name>sp_instance_d9c8d2b8c3daf2109f0231cc05013139</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2025-12-08 02:08:15</sys_updated_on>
-        <title/>
+        <sys_updated_on>2026-01-05 08:28:34</sys_updated_on>
+        <title>Browse KB Articles</title>
         <url/>
         <widget_parameters><![CDATA[{
-	"user_prediction_count": {
-		"value": null,
-		"displayValue": ""
-	},
-	"recent_activity_cut_off_in_days": {
-		"value": null,
-		"displayValue": ""
-	},
-	"title": {
+	"order_by": {
 		"value": "",
 		"displayValue": ""
 	},
-	"limit": {
-		"value": 3,
-		"displayValue": "3"
-	},
-	"category": {
-		"value": "knowledge and catalog",
-		"displayValue": "knowledge and catalog"
-	},
-	"list_type": {
-		"value": "Card List",
-		"displayValue": "Card List"
-	},
-	"card_behaviour": {
-		"value": "single",
-		"displayValue": "single"
-	},
-	"load_config": {
-		"value": "async",
-		"displayValue": "Asynchronous"
-	},
-	"show_empty_state": {
+	"order_reverse": {
 		"value": "false",
 		"displayValue": "false"
+	},
+	"post_question_label": {
+		"value": "",
+		"displayValue": ""
+	},
+	"create_article_label": {
+		"value": "",
+		"displayValue": ""
+	},
+	"post_question_url": {
+		"value": "",
+		"displayValue": ""
+	},
+	"create_article_url": {
+		"value": "",
+		"displayValue": ""
 	}
 }]]></widget_parameters>
     </sp_instance>
-    <sys_translated_text action="delete_multiple" query="documentkey=30f5fc3bc36972109f0231cc050131da"/>
+    <sys_translated_text action="delete_multiple" query="documentkey=d9c8d2b8c3daf2109f0231cc05013139"/>
 </record_update>

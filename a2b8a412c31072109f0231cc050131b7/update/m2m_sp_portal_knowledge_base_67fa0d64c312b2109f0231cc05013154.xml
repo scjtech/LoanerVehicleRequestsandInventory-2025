@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="m2m_sp_portal_knowledge_base">
+    <m2m_sp_portal_knowledge_base action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <kb_knowledge_base display_value="AutoTrack - Employee and Managers">1757b0ecc39e72109f0231cc05013158</kb_knowledge_base>
+        <order>100</order>
+        <sp_portal display_value="AutoTrack Employee Center">b245703bc36972109f0231cc050131ef</sp_portal>
+        <sys_class_name>m2m_sp_portal_knowledge_base</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-01-04 08:07:01</sys_created_on>
+        <sys_id>67fa0d64c312b2109f0231cc05013154</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>AutoTrack - Employee and Managers.AutoTrack Employee Center</sys_name>
+        <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Loaner Vehicle Application">a2b8a412c31072109f0231cc050131b7</sys_scope>
+        <sys_update_name>m2m_sp_portal_knowledge_base_67fa0d64c312b2109f0231cc05013154</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-01-04 08:07:01</sys_updated_on>
+    </m2m_sp_portal_knowledge_base>
+</record_update>
