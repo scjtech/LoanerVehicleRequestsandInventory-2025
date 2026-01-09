@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_embedded_tour_step">
+    <sys_embedded_tour_step action="INSERT_OR_UPDATE">
+        <action>false</action>
+        <action_event>next</action_event>
+        <action_target/>
+        <action_target_ref/>
+        <active>true</active>
+        <content><![CDATA[You’re now ready to start using AutoTrack!  As the portal continues to evolve, new tools and features may be added to support your work. Check back anytime for updates, announcements, and helpful resources.]]></content>
+        <guide display_value="AutoTrack EC Tour">8b496945c3de32109f0231cc0501312e</guide>
+        <implicit>false</implicit>
+        <link/>
+        <name>Conclusion</name>
+        <options/>
+        <order>999</order>
+        <placement>bottom</placement>
+        <skippable>false</skippable>
+        <step_type>concl</step_type>
+        <sys_class_name>sys_embedded_tour_step</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-01-06 07:08:08</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>24b0df81c35672109f0231cc0501318d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Conclusion</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Loaner Vehicle Application">a2b8a412c31072109f0231cc050131b7</sys_scope>
+        <sys_update_name>sys_embedded_tour_step_24b0df81c35672109f0231cc0501318d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-01-06 07:08:08</sys_updated_on>
+        <target/>
+        <target_ref/>
+        <title/>
+        <ui_version>dynamic</ui_version>
+        <view/>
+        <window/>
+    </sys_embedded_tour_step>
+    <sys_translated_text action="delete_multiple" query="documentkey=24b0df81c35672109f0231cc0501318d"/>
+</record_update>

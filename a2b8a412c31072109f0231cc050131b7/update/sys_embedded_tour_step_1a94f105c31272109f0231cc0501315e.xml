@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_embedded_tour_step">
+    <sys_embedded_tour_step action="INSERT_OR_UPDATE">
+        <action>true</action>
+        <action_event>click</action_event>
+        <action_target/>
+        <action_target_ref/>
+        <active>true</active>
+        <content><![CDATA[The AutoTrack Employee Center is your hub for managing loaner vehicle operations. Managers, delivery teams, and servicing teams can use this portal to track assigned vehicles, claim unassigned records, review servicing and delivery tasks, and monitor return dates through reports and calendars.
+
+This workspace is built to improve visibility, coordination, and efficiency across all stages of the loaner vehicle lifecycle.]]></content>
+        <guide display_value="AutoTrack EC Tour">8b496945c3de32109f0231cc0501312e</guide>
+        <implicit>false</implicit>
+        <link/>
+        <name>Introduction</name>
+        <options/>
+        <order>0</order>
+        <placement>bottom</placement>
+        <skippable>false</skippable>
+        <step_type>intro</step_type>
+        <sys_class_name>sys_embedded_tour_step</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-01-06 00:25:46</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>1a94f105c31272109f0231cc0501315e</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Introduction</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Loaner Vehicle Application">a2b8a412c31072109f0231cc050131b7</sys_scope>
+        <sys_update_name>sys_embedded_tour_step_1a94f105c31272109f0231cc0501315e</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-01-06 03:40:24</sys_updated_on>
+        <target/>
+        <target_ref/>
+        <title><![CDATA[Welcome to AutoTrack]]></title>
+        <ui_version>dynamic</ui_version>
+        <view/>
+        <window/>
+    </sys_embedded_tour_step>
+    <sys_translated_text action="delete_multiple" query="documentkey=1a94f105c31272109f0231cc0501315e"/>
+</record_update>
