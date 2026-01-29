@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_746154_loaner_0.autoTrackImportOnDemand</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description/>
+        <mobile_callable>false</mobile_callable>
+        <name>autoTrackImportOnDemand</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var autoTrackImportOnDemand = Class.create();
+autoTrackImportOnDemand.prototype = {
+    initialize: function () {
+        // nothing needed here for now
+    },
+
+    /**
+     * Load an attachment via a Data Source and run a Transform Map.
+     *
+     * @param {String} dataSourceSysId   sys_id of sys_data_source created for the uploaded Excel file
+     * @param {String} transformMapSysId sys_id of the Transform Map (e.g. "Vehicle Inventory Additions")
+     * @returns {Object}  { import_set_sys_id: "<sys_id>" } or null if something failed
+     */
+    importAndTransform: function (dataSourceSysId, transformMapSysId) {
+        if (!dataSourceSysId || !transformMapSysId) {
+            gs.error('autoTrackImportOnDemand.importAndTransform called without required parameters.');
+            return null;
+        }
+
+        // 1. Get the Data Source record
+        var grDataSource = new GlideRecord('sys_data_source');
+        if (!grDataSource.get(dataSourceSysId)) {
+            gs.error('autoTrackImportOnDemand: Data Source not found: ' + dataSourceSysId);
+            return null;
+        }
+
+        // 2. Create an Import Set from the Data Source
+        var importSetLoader = new GlideImportSetLoader();
+        var grImportSet = importSetLoader.getImportSetGr(grDataSource);
+
+        // Load the attachment into the import set table
+        importSetLoader.loadImportSetTable(grImportSet, grDataSource);
+
+        // Mark the import set as loaded
+        grImportSet.setValue('state', 'loaded');
+        grImportSet.update();
+
+        // 3. Run the Transform Map against that Import Set
+        var importSetTransformer = new GlideImportSetTransformer();
+        importSetTransformer.setImportSetID(grImportSet.getUniqueValue());
+        importSetTransformer.setMapID(transformMapSysId);
+        importSetTransformer.setSyncImport(true); // run synchronously
+        importSetTransformer.transformAllMaps(grImportSet);
+
+        // 4. Return the import set sys_id so Flow / notifications can use it
+        return {
+            import_set_sys_id: grImportSet.getUniqueValue()
+        };
+    },
+
+    type: 'autoTrackImportOnDemand'
+};
+]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-01-19 08:01:04</sys_created_on>
+        <sys_id>70c05ad9c3aa72109f0231cc0501317d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>autoTrackImportOnDemand</sys_name>
+        <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Loaner Vehicle Application">a2b8a412c31072109f0231cc050131b7</sys_scope>
+        <sys_update_name>sys_script_include_70c05ad9c3aa72109f0231cc0501317d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-01-19 08:01:04</sys_updated_on>
+    </sys_script_include>
+</record_update>
