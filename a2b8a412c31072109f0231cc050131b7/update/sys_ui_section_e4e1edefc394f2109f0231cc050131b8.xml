@@ -4,13 +4,13 @@
             <element>activity.xml</element>
             <position>0</position>
             <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2025-10-06 07:23:15</sys_created_on>
-            <sys_id>78e12123c3d4f2109f0231cc0501314b</sys_id>
+            <sys_created_on>2026-02-03 23:46:41</sys_created_on>
+            <sys_id>30c10b92c3b2f2109f0231cc05013187</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter display_value="Activities (filtered)">444ea5c6bf310100e628555b3f0739d6</sys_ui_formatter>
             <sys_ui_section caption="Activity" display_value="Activity" name="x_746154_loaner_0_vehicle_tracker" sys_domain="global" view="Default view">e4e1edefc394f2109f0231cc050131b8</sys_ui_section>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2025-10-06 07:23:15</sys_updated_on>
+            <sys_updated_on>2026-02-03 23:46:41</sys_updated_on>
             <sys_user/>
             <type>formatter</type>
         </sys_ui_element>
