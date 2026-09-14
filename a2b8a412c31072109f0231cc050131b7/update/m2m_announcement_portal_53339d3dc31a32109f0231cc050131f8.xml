@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="m2m_announcement_portal">
     <m2m_announcement_portal action="INSERT_OR_UPDATE">
-        <announcement display_value="">87339d3dc31a32109f0231cc050131f3</announcement>
+        <announcement display_value="AutoTrack Employee Center Is Live!">87339d3dc31a32109f0231cc050131f3</announcement>
         <order>100</order>
         <sp_portal display_value="AutoTrack Employee Center">b245703bc36972109f0231cc050131ef</sp_portal>
         <sys_class_name>m2m_announcement_portal</sys_class_name>

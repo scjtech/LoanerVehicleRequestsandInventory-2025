@@ -39,6 +39,7 @@
         <next_element/>
         <primary>false</primary>
         <read_only>false</read_only>
+        <read_only_option/>
         <read_roles/>
         <reference display_value="" name="x_746154_loaner_0_loaner_vehicle_catalog">x_746154_loaner_0_loaner_vehicle_catalog</reference>
         <reference_cascade_rule/>
@@ -52,7 +53,6 @@
         <sys_class_name>sys_dictionary</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2025-10-07 04:04:30</sys_created_on>
-        <sys_id>866dfd3bc39c32109f0231cc050131e3</sys_id>
         <sys_name>Vehicle</sys_name>
         <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
         <sys_policy/>

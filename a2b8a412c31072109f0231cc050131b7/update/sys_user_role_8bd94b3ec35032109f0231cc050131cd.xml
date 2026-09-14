@@ -4,6 +4,7 @@
         <can_delegate>true</can_delegate>
         <description/>
         <elevated_privilege>false</elevated_privilege>
+        <federated_id>waXI7sG/hKlm49xbxwLMBKuZBPl4mbxOFu0yWk4pHK4=</federated_id>
         <grantable>true</grantable>
         <includes_roles/>
         <name>x_746154_loaner_0.loaner_vehicle_catalog_user</name>

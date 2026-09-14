@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element audit="true" db_object_id="da668d6bc314f2109f0231cc050131ca" label="Vehicle Tracker" max_length="40" name="x_746154_loaner_0_vehicle_tracker" type="collection">
+        <element label="Vehicle Requestor" max_length="32" name="vehicle_requestor" read_only="true" read_only_option="instance_configured" reference="sys_user" reference_qual="roles=x_746154_loaner_0.lva_user^EQ" reference_qual_condition="roles=x_746154_loaner_0.lva_user^EQ" type="reference"/>
+        <element label="Delivery Information" max_length="1000" name="delivery_information" type="string"/>
+        <element label="Return Notes" max_length="1000" name="return_notes" type="string"/>
+        <element label="Location" max_length="32" name="location" reference="cmn_location" type="reference"/>
+        <element label="Additional Comments" max_length="1000" name="additional_comments" type="string"/>
+        <element label="Expected Return Date" max_length="40" name="expected_return_date" type="glide_date"/>
+        <element label="Vehicle" mandatory="true" max_length="32" name="vehicle" reference="x_746154_loaner_0_loaner_vehicle_catalog" type="reference"/>
+        <element label="Request Number" mandatory="true" max_length="32" name="request_number" reference="sc_req_item" type="reference"/>
+        <element label="Assigned To" max_length="32" name="assigned_to" reference="sys_user" type="reference"/>
+        <element choice="1" label="Reschedule Status" max_length="40" name="reschedule_status" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="Approved" sequence="20" value="approved"/>
+                <element inactive_on_update="false" label="Rejected" sequence="30" value="rejected"/>
+            </choice>
+        </element>
+        <element choice="1" label="Return Vehicle Status" max_length="40" name="return_vehicle_status" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="Returned in Good Condition" sequence="0" value="returned in good condition"/>
+                <element inactive_on_update="false" label="Returned with Minor Issues" sequence="1" value="returned with minor issues"/>
+                <element inactive_on_update="false" label="Returned with Major Issues" sequence="2" value="returned with major issues"/>
+            </choice>
+        </element>
+        <element label="Date Requested" max_length="40" name="date_requested" type="glide_date"/>
+        <element attributes="ignore_filter_on_new=true" default="javascript:global.getNextObjNumberPadded();" display="true" label="Number" max_length="40" name="number" type="string"/>
+        <element hint="-Tires/Wheels or Windows/Windshield Issue: 3 business days&#10;&#10;-Under the Hood Issue: 6 business days&#10;&#10;-Body or Interior Issue: 9 business days" label="Actual Return Date" max_length="255" name="actual_return_date" type="glide_date"/>
+        <element choice="1" label="Tracker Status" mandatory="true" max_length="40" name="tracker_status" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="Open" sequence="20" value="open"/>
+                <element inactive_on_update="false" label="Cancelled" sequence="40" value="cancelled"/>
+                <element inactive_on_update="false" label="Closed" sequence="30" value="closed"/>
+            </choice>
+        </element>
+        <element label="Reschedule Reason" max_length="3000" name="reschedule_reason" type="string"/>
+        <element choice="1" label="Vehicle Status" mandatory="true" max_length="40" name="vehicle_status" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="Returned to Warehouse" sequence="60" value="returned_to_warehouse"/>
+                <element inactive_on_update="false" label="Pending Release" sequence="20" value="pending_release"/>
+                <element inactive_on_update="false" label="Returned for Inspection" sequence="40" value="returned_for_inspection"/>
+                <element inactive_on_update="false" label="Out on Field" sequence="30" value="out_on_field"/>
+                <element inactive_on_update="false" label="Sent for Servicing" sequence="50" value="sent_for_servicing"/>
+                <element inactive_on_update="false" label="Decommissioned" sequence="70" value="decommissioned"/>
+            </choice>
+        </element>
+        <index name="index">
+            <element name="assigned_to"/>
+        </index>
+        <index name="index2">
+            <element name="location"/>
+        </index>
+        <index name="index3">
+            <element name="request_number"/>
+        </index>
+        <index name="index4">
+            <element name="vehicle"/>
+        </index>
+        <index name="index5">
+            <element name="vehicle_requestor"/>
+        </index>
+    </element>
+</database>

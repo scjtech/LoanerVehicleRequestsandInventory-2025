@@ -7,7 +7,7 @@
         <applies_sc_task>true</applies_sc_task>
         <applies_target_record>false</applies_target_record>
         <applies_to>item</applies_to>
-        <cat_item display_value="Loaner Vehicle Return Schedule">98bb1140c378b2109f0231cc0501314e</cat_item>
+        <cat_item display_value="Loaner Vehicle Return Reschedule">98bb1140c378b2109f0231cc0501314e</cat_item>
         <cat_variable>IO:a9635ba4c3f472109f0231cc050131f8</cat_variable>
         <condition/>
         <description/>

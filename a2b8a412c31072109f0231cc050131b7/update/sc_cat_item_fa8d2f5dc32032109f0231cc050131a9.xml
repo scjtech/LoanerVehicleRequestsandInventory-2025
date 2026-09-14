@@ -5,6 +5,7 @@
         <availability>on_desktop</availability>
         <billable>false</billable>
         <category display_value="Loaner Vehicle">6c2dbb51c3a032109f0231cc0501318d</category>
+        <cc_render_type>system</cc_render_type>
         <checked_out>false</checked_out>
         <cost>0</cost>
         <custom_cart/>
@@ -58,6 +59,7 @@
         <sc_ic_item_staging/>
         <sc_ic_version/>
         <sc_template/>
+        <secondary_owners/>
         <short_description>Request Loaner Vehicle</short_description>
         <show_variable_help_on_load>false</show_variable_help_on_load>
         <start_closed>false</start_closed>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="m2m_sp_widget_dependency">
     <m2m_sp_widget_dependency action="INSERT_OR_UPDATE">
         <sp_dependency display_value="AI Search Assist">e37abe9167a65010b3d782f45685efe9</sp_dependency>
-        <sp_widget display_value="Copy of AI Search Assist">27ac78a0c341b2109f0231cc05013126</sp_widget>
+        <sp_widget display_value="AutoTrack Assistant">27ac78a0c341b2109f0231cc05013126</sp_widget>
         <sys_class_name>m2m_sp_widget_dependency</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2025-11-03 03:46:01</sys_created_on>

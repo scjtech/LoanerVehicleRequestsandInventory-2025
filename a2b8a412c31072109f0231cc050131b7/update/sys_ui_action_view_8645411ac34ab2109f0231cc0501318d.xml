@@ -9,7 +9,7 @@
         <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
         <sys_policy/>
         <sys_scope display_value="Loaner Vehicle Application">a2b8a412c31072109f0231cc050131b7</sys_scope>
-        <sys_ui_action display_value="Tracker Managers Claim Button">8cc0e734c34232109f0231cc050131c2</sys_ui_action>
+        <sys_ui_action display_value="Claim VOID">8cc0e734c34232109f0231cc050131c2</sys_ui_action>
         <sys_ui_view display_value="Portal" name="portal">6293c073e13222108bb2327e625886ef</sys_ui_view>
         <sys_update_name>sys_ui_action_view_8645411ac34ab2109f0231cc0501318d</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>

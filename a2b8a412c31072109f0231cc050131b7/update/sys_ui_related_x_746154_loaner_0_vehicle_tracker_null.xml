@@ -2,6 +2,7 @@
     <sys_ui_related sys_domain="global" table="x_746154_loaner_0_vehicle_tracker" version="2" view="">
         <sys_ui_related_list_entry action="INSERT_OR_UPDATE">
             <filter/>
+            <group_by_field/>
             <list_id display_value="Vehicle Tracker - Default view" name="x_746154_loaner_0_vehicle_tracker" related_list="NULL" sys_domain="global" view="Default view">57191a3fc31072109f0231cc0501319a</list_id>
             <order_by/>
             <position>0</position>

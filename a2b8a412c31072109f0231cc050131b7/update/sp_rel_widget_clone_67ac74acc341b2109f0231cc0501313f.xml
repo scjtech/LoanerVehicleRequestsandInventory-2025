@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="sp_rel_widget_clone">
     <sp_rel_widget_clone action="INSERT_OR_UPDATE">
-        <child display_value="Copy of AI Search Assist">27ac78a0c341b2109f0231cc05013126</child>
+        <child display_value="AutoTrack Assistant">27ac78a0c341b2109f0231cc05013126</child>
         <cloned>2025-11-03 03:46:01</cloned>
         <last_validated>2025-11-03 03:46:01</last_validated>
         <parent display_value="AI Search Assist">66135172671e1010b3d782f45685ef9e</parent>

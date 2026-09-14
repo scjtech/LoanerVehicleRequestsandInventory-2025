@@ -5,6 +5,7 @@
         <component_props>{"src":"upload_ChatGPT Image Nov 2, 2025, 02_49_06 PM.png","sources":[],"fit":"scale-down","position":"center center","width":"","height":"","alt":"","configAria":"{\"link\":{}}","supportRtl":false}</component_props>
         <h>14</h>
         <name/>
+        <required_translations>[]</required_translations>
         <stored_component/>
         <sys_class_name>par_dashboard_widget</sys_class_name>
         <sys_created_by>admin</sys_created_by>

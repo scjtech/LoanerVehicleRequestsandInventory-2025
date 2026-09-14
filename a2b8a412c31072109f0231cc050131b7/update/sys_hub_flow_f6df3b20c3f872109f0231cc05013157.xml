@@ -3,6 +3,7 @@
         <access>public</access>
         <acls/>
         <active>true</active>
+        <allow_high_security_roles>false</allow_high_security_roles>
         <annotation/>
         <attributes>browserActivatedIn=chrome,integrationActivatedIn=standalone,labelCacheCleanUpExecuted=true,timeFromCreateToActivate=8889095000,viewActivatedIn=naturalLanguage</attributes>
         <authored_on_release_version>28100</authored_on_release_version>
@@ -36,7 +37,7 @@
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>f6df3b20c3f872109f0231cc05013157</sys_id>
-        <sys_mod_count>374</sys_mod_count>
+        <sys_mod_count>375</sys_mod_count>
         <sys_name>Return Vehicle Reschedule</sys_name>
         <sys_overrides/>
         <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
@@ -44,11 +45,11 @@
         <sys_scope display_value="Loaner Vehicle Application">a2b8a412c31072109f0231cc050131b7</sys_scope>
         <sys_update_name>sys_hub_flow_f6df3b20c3f872109f0231cc05013157</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2026-02-02 03:54:42</sys_updated_on>
+        <sys_updated_on>2026-02-02 03:54:43</sys_updated_on>
         <type>flow</type>
         <updation_source/>
         <version>2</version>
-        <version_record display_value="Created 2026-02-01 19:54:34">8857e171c3b232109f0231cc050131f1</version_record>
+        <version_record>2257a571c3b232109f0231cc0501314a</version_record>
     </sys_hub_flow>
     <sys_translated_text action="delete_multiple" query="documentkey=f6df3b20c3f872109f0231cc05013157"/>
     <sys_variable_value action="delete_multiple" query="document_key=f6df3b20c3f872109f0231cc05013157"/>
@@ -135,6 +136,7 @@
         <order>100</order>
         <primary>false</primary>
         <read_only>false</read_only>
+        <read_only_option/>
         <read_roles/>
         <reference/>
         <reference_cascade_rule/>
@@ -219,6 +221,7 @@
         <order>100</order>
         <primary>false</primary>
         <read_only>false</read_only>
+        <read_only_option/>
         <read_roles/>
         <reference display_value="" name="sc_req_item">sc_req_item</reference>
         <reference_cascade_rule/>
@@ -953,6 +956,7 @@
         <access>public</access>
         <acls/>
         <active>true</active>
+        <allow_high_security_roles>false</allow_high_security_roles>
         <annotation/>
         <attributes>browserActivatedIn=chrome,integrationActivatedIn=standalone,labelCacheCleanUpExecuted=true,viewActivatedIn=naturalLanguage</attributes>
         <authored_on_release_version>28100</authored_on_release_version>
@@ -1057,6 +1061,7 @@
         <order>100</order>
         <primary>false</primary>
         <read_only>true</read_only>
+        <read_only_option>instance_configured</read_only_option>
         <read_roles/>
         <reference/>
         <reference_cascade_rule/>
@@ -1141,6 +1146,7 @@
         <order>100</order>
         <primary>false</primary>
         <read_only>false</read_only>
+        <read_only_option/>
         <read_roles/>
         <reference display_value="" name="sc_req_item">sc_req_item</reference>
         <reference_cascade_rule/>

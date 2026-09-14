@@ -7,21 +7,22 @@
         <experience/>
         <grid>48</grid>
         <name>LVA Dashboard - Managers</name>
+        <ready_to_migrate>Not Applicable</ready_to_migrate>
         <sys_class_name>par_dashboard</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2026-01-03 03:20:43</sys_created_on>
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>04efb64cc31232109f0231cc05013141</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>1</sys_mod_count>
         <sys_name>LVA Dashboard - Managers</sys_name>
         <sys_overrides/>
         <sys_package display_value="Loaner Vehicle Application" source="x_746154_loaner_0">a2b8a412c31072109f0231cc050131b7</sys_package>
         <sys_policy/>
         <sys_scope display_value="Loaner Vehicle Application">a2b8a412c31072109f0231cc050131b7</sys_scope>
         <sys_update_name>par_dashboard_04efb64cc31232109f0231cc05013141</sys_update_name>
-        <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2026-01-03 03:20:43</sys_updated_on>
+        <sys_updated_by>system</sys_updated_by>
+        <sys_updated_on>2026-08-08 21:31:23</sys_updated_on>
         <sys_ux_app_config/>
         <sys_ux_app_route/>
         <sys_ux_macroponent/>

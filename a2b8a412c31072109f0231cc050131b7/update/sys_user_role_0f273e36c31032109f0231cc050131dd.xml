@@ -4,6 +4,7 @@
         <can_delegate>true</can_delegate>
         <description>user role for Loaner Vehicle Application</description>
         <elevated_privilege>false</elevated_privilege>
+        <federated_id>TLco1usxLT8Cq8NPe8vqvC/estGy/uWQGNJ0SK+UmHY=</federated_id>
         <grantable>true</grantable>
         <includes_roles/>
         <name>x_746154_loaner_0.lva_user</name>
